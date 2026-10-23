@@ -10,6 +10,7 @@ export function ownerLabel(owner: PointoutComment['owner'], domOwner: DomOwnerIn
   return `<${domOwner.tag} "${domOwner.heading ?? domOwner.name}">`;
 }
 
+/** A short brief per comment, the closing note, then the whole bundle as fenced JSON. */
 export const defaultFormatter: ExportFormatter = (bundle) => {
   const { appName, createdAt, viewport, comments } = bundle;
   const items = comments.map((c) => {

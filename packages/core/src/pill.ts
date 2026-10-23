@@ -78,13 +78,6 @@ export class Pill {
     this.toastTimer = setTimeout(() => (this.toast.hidden = true), 1600);
   }
 
-  destroy(): void {
-    clearTimeout(this.toastTimer);
-    this.pill.remove();
-    this.menu.remove();
-    this.toast.remove();
-  }
-
   private buildMenu(): void {
     this.menu.setAttribute('role', 'menu');
     this.menu.setAttribute('aria-label', 'Pointout');

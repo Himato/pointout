@@ -20,8 +20,6 @@ import type {
   SelectMode,
 } from './types';
 
-export const TAG_NAME = 'point-out';
-
 /** `<point-out>`: owns the state and wires the small pieces together. */
 export class PointoutElement extends HTMLElement {
   private options: PointoutOptions = { appName: 'app' };

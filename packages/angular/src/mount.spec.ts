@@ -14,15 +14,14 @@ afterEach(() => {
 });
 
 describe('mountPointoutForAngular', () => {
-  it('wires the Angular resolver and a location based url', () => {
+  it('wires the Angular resolver and leaves the url to the core', () => {
     document.title = 'Shop';
-    history.replaceState(null, '', '/orders?page=2#top');
 
     const handle = mountPointoutForAngular();
 
     expect(handle).toBe(mounted.mock.results[0]!.value);
     expect(lastOptions()).toMatchObject({ appName: 'Shop', resolveOwner: angularOwnerResolver });
-    expect(lastOptions().resolveUrl!()).toBe('/orders?page=2#top');
+    expect(lastOptions().resolveUrl).toBeUndefined();
   });
 
   it('respects the caller resolveUrl, appName and other options', () => {

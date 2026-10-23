@@ -36,7 +36,12 @@ export function createCommentStore(appName: string, mode: StorageMode): CommentS
       try {
         backend()?.setItem(key, JSON.stringify(comments));
       } catch {
-        /* quota exceeded or storage blocked: keep the in-memory copy */
+        // Screenshots are what blow the quota. Keep the words, the in-memory copy keeps the rest.
+        try {
+          backend()?.setItem(key, JSON.stringify(comments.map(withoutScreenshot)));
+        } catch {
+          /* storage blocked */
+        }
       }
     },
     clear() {
@@ -47,4 +52,10 @@ export function createCommentStore(appName: string, mode: StorageMode): CommentS
       }
     },
   };
+}
+
+function withoutScreenshot(comment: PointoutComment): PointoutComment {
+  const copy = { ...comment };
+  delete copy.screenshotDataUrl;
+  return copy;
 }

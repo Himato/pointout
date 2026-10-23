@@ -42,9 +42,15 @@ export function createShortcutMatcher(spec: string, isMac = isMacPlatform()): Sh
     keyMatches(event, chord.key);
 }
 
-// Shift and Option change `event.key` ('F', 'ƒ'), so fall back to the physical key code.
+/**
+ * Layout first: `event.key` ignoring case. When Option or a non-Latin layout turns the key into
+ * something else ('ƒ', 'а'), fall back to the physical letter in `event.code`. A Latin key that
+ * simply differs (AZERTY 'q' on the US 'A' key) is a different key, so no fallback there.
+ */
 function keyMatches(event: KeyboardEvent, key: string): boolean {
   if (!key) return false;
-  if (event.key?.toLowerCase() === key) return true;
+  const typed = event.key?.toLowerCase() ?? '';
+  if (typed === key) return true;
+  if (/^[a-z]$/.test(typed)) return false;
   return event.code?.toLowerCase() === (/^[a-z]$/.test(key) ? `key${key}` : key);
 }

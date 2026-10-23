@@ -58,10 +58,12 @@ describe('attachHitTest', () => {
   it('stops the page handler in intercept mode', () => {
     const { onSelect } = start('intercept');
     const pageHandler = vi.fn();
-    pageButton.addEventListener('click', pageHandler);
-    pageButton.addEventListener('mousedown', pageHandler);
+    const presses = ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'dblclick'];
+    for (const type of [...presses, 'click']) pageButton.addEventListener(type, pageHandler);
 
-    pageButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+    for (const type of presses) {
+      pageButton.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
+    }
     const event = click(pageButton);
 
     expect(pageHandler).not.toHaveBeenCalled();

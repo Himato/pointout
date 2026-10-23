@@ -61,6 +61,17 @@ describe('createCommentStore', () => {
     expect(() => createCommentStore('Shop', 'session').save([comment])).not.toThrow();
   });
 
+  it('drops screenshots when the full list does not fit', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(() => {
+      throw new DOMException('full', 'QuotaExceededError');
+    });
+    const store = createCommentStore('Shop', 'session');
+
+    store.save([{ ...comment, screenshotDataUrl: 'data:image/png;base64,AAAA' }]);
+
+    expect(store.load()).toEqual([comment]);
+  });
+
   it('survives garbage in storage', () => {
     sessionStorage.setItem(storageKey('Shop'), '{nope');
     expect(createCommentStore('Shop', 'session').load()).toEqual([]);

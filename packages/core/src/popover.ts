@@ -66,11 +66,6 @@ export class Popover {
     this.returnFocus = null;
   }
 
-  destroy(): void {
-    this.close();
-    this.panel.remove();
-  }
-
   private submit(): void {
     const comment = this.input.value.trim();
     const request = this.request;

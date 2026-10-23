@@ -8,7 +8,7 @@ export interface HitTestOptions {
   onSelect: (el: Element) => void;
 }
 
-const SWALLOWED = ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'] as const;
+const SWALLOWED = ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click', 'dblclick'];
 
 /** The real element under the pointer, even inside open shadow roots, or null for our own UI. */
 export function pageTarget(event: Event, host: Element): Element | null {

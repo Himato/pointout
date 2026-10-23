@@ -1,6 +1,9 @@
+/** `'intercept'` takes every click while on. `'alt-click'` only takes Alt+click. */
 export type SelectMode = 'intercept' | 'alt-click';
+/** Where comments survive a reload. */
 export type StorageMode = 'session' | 'local' | 'none';
 
+/** What `mountPointout` accepts. Only `appName` is required. */
 export interface PointoutOptions {
   /** Shown in the brief and used as the storage key. */
   appName: string;
@@ -20,8 +23,10 @@ export interface PointoutOptions {
   formatter?: ExportFormatter;
 }
 
+/** A framework adapter: names the component that owns `el`, or returns null. */
 export type OwnerResolver = (el: Element) => OwnerInfo | null;
 
+/** The framework's view of an element, as an adapter reports it. */
 export interface OwnerInfo {
   framework: string;
   component: string;
@@ -34,6 +39,7 @@ export interface OwnerInfo {
   scope?: Element;
 }
 
+/** The nearest framework-neutral boundary around an element. The core always fills it. */
 export interface DomOwnerInfo {
   tag: string;
   marker:
@@ -43,8 +49,10 @@ export interface DomOwnerInfo {
   path: string;
 }
 
+/** Turns a bundle into the text that Copy for Claude puts on the clipboard. */
 export type ExportFormatter = (bundle: PointoutBundle) => string;
 
+/** The remote control `mountPointout` returns. */
 export interface PointoutHandle {
   unmount(): void;
   toggle(on?: boolean): void;
@@ -54,6 +62,7 @@ export interface PointoutHandle {
   exportJson(): string;
 }
 
+/** One comment, with everything needed to find the element again. */
 export interface PointoutComment {
   n: number;
   comment: string;
@@ -63,7 +72,7 @@ export interface PointoutComment {
   selector: string;
   /**
    * Document-unique selector of the element `selector` is relative to: the owner's host, or the
-   * shadow host when the element lives in a shadow root. Absent when `selector` is document-unique.
+   * shadow host when the element lives in a shadow root. Absent when `selector` is document-wide.
    */
   anchor?: string;
   tag: string;
@@ -74,6 +83,7 @@ export interface PointoutComment {
   screenshotDataUrl?: string;
 }
 
+/** Everything an export contains. */
 export interface PointoutBundle {
   appName: string;
   createdAt: string;

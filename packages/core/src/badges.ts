@@ -50,11 +50,6 @@ export class Badges {
     this.layer.replaceChildren();
   }
 
-  destroy(): void {
-    this.hide();
-    this.layer.remove();
-  }
-
   private update(): void {
     const url = this.sources.currentUrl();
     const relocate = url !== this.lastUrl || this.frame++ % RELOCATE_EVERY_FRAMES === 0;

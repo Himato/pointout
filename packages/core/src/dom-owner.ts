@@ -1,11 +1,10 @@
-import { collapseText, parentOrHost } from './dom';
+import { TAG_NAME, collapseText, parentOrHost } from './dom';
 import { buildSelector } from './selector';
 import type { DomOwnerInfo } from './types';
 
 type Marker = DomOwnerInfo['marker'];
 type Boundary = { el: Element; marker: Marker; name: string };
 
-const OWN_TAG = 'point-out';
 const LANDMARKS = new Set([
   'main',
   'nav',
@@ -34,7 +33,7 @@ export function resolveDomOwner(el: Element): DomOwnerInfo {
 
 function findBoundary(el: Element): Boundary | null {
   for (let node = parentOrHost(el); node; node = parentOrHost(node)) {
-    if (node.localName === OWN_TAG) continue;
+    if (node.localName === TAG_NAME) continue;
     const match = matchMarker(node);
     if (match) return { el: node, ...match };
   }

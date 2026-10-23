@@ -1,4 +1,5 @@
-import { PointoutElement, TAG_NAME } from './element';
+import { TAG_NAME } from './dom';
+import { PointoutElement } from './element';
 import type { PointoutHandle, PointoutOptions } from './types';
 
 const NOOP_HANDLE: PointoutHandle = {

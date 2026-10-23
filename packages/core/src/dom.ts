@@ -1,3 +1,5 @@
+export const TAG_NAME = 'point-out';
+
 export function collapseText(value: string | null | undefined, max = 80): string {
   return (value ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
 }

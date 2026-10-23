@@ -46,15 +46,6 @@ describe('mountPointout', () => {
 
   it('toggles on the shortcut', () => {
     mount();
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'F',
-        code: 'KeyF',
-        ctrlKey: true,
-        metaKey: true,
-        shiftKey: true,
-      }),
-    );
     const isMac = /mac/i.test(navigator.platform);
     window.dispatchEvent(
       new KeyboardEvent('keydown', {

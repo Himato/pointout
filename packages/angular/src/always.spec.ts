@@ -47,11 +47,9 @@ describe('the initializer', () => {
     expect(options.resolveUrl!()).toBe('/from-router');
   });
 
-  it('falls back to location without a Router', async () => {
-    history.replaceState(null, '', '/plain?x=1');
-
+  it('leaves the url to the core without a Router', async () => {
     await runInitializer([]);
 
-    expect(vi.mocked(mountPointout).mock.lastCall![0].resolveUrl!()).toBe('/plain?x=1');
+    expect(vi.mocked(mountPointout).mock.lastCall![0].resolveUrl).toBeUndefined();
   });
 });

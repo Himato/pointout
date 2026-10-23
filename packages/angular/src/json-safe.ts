@@ -2,13 +2,17 @@ export const MAX_ENTRIES = 20;
 
 type Primitive = string | number | boolean | null;
 
-/** A JSON friendly copy of `value`, or `undefined` when it should be left out of the brief. */
+/**
+ * A JSON friendly copy of `value`, one level deep, or `undefined` when it should stay out of the
+ * brief. Nothing nested is followed, so cycles cannot happen.
+ */
 export function toJsonSafe(value: unknown): unknown {
-  if (isPrimitive(value)) return value;
-  if (Array.isArray(value)) return value.filter(isPrimitive).slice(0, MAX_ENTRIES);
+  const primitive = toPrimitive(value);
+  if (primitive !== undefined) return primitive;
+  if (Array.isArray(value)) return keepPrimitives(value).slice(0, MAX_ENTRIES);
   if (isPlainObject(value) && !isSubscribable(value)) {
-    const entries = Object.entries(value).filter(([, v]) => isPrimitive(v));
-    return Object.fromEntries(entries.slice(0, MAX_ENTRIES));
+    const entries = Object.entries(value).map(([k, v]) => [k, toPrimitive(v)] as const);
+    return Object.fromEntries(entries.filter(([, v]) => v !== undefined).slice(0, MAX_ENTRIES));
   }
   return undefined;
 }
@@ -23,10 +27,16 @@ function isSubscribable(value: Record<string, unknown>): boolean {
   return typeof value['subscribe'] === 'function';
 }
 
-function isPrimitive(value: unknown): value is Primitive {
-  if (value === null) return true;
-  if (typeof value === 'number') return Number.isFinite(value);
-  return typeof value === 'string' || typeof value === 'boolean';
+/** Dates become ISO strings, like `JSON.stringify` would make them. */
+function toPrimitive(value: unknown): Primitive | undefined {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? undefined : value.toISOString();
+  return undefined;
+}
+
+function keepPrimitives(values: unknown[]): Primitive[] {
+  return values.map(toPrimitive).filter((v): v is Primitive => v !== undefined);
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

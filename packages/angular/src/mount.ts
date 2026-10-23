@@ -1,6 +1,7 @@
 import { mountPointout, type PointoutHandle, type PointoutOptions } from '@pointout/core';
 import { angularOwnerResolver } from './resolver';
 
+/** `PointoutOptions` without `resolveOwner`, and `appName` falls back to `document.title`. */
 export type AngularPointoutOptions = Omit<PointoutOptions, 'resolveOwner' | 'appName'> & {
   /** Defaults to `document.title`. */
   appName?: string;
@@ -12,10 +13,5 @@ export function mountPointoutForAngular(options: AngularPointoutOptions = {}): P
     ...options,
     appName: options.appName ?? (typeof document === 'undefined' ? '' : document.title),
     resolveOwner: angularOwnerResolver,
-    resolveUrl: options.resolveUrl ?? locationUrl,
   });
-}
-
-function locationUrl(): string {
-  return location.pathname + location.search + location.hash;
 }

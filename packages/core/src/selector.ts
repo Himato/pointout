@@ -35,9 +35,9 @@ export function buildSelector(el: Element, scope?: Element | null): string {
 }
 
 /**
- * Document-unique selector of the element `buildSelector(el, scope)` is relative to, or
- * undefined when that selector is already document-unique. One shadow level only: a host
- * that itself sits inside a shadow root gets no anchor.
+ * Document-unique selector of the element `buildSelector(el, scope)` is relative to: the scope,
+ * or the shadow host. Undefined when there is neither. One shadow level only: a host that
+ * itself sits inside a shadow root gets no anchor.
  */
 export function buildAnchor(el: Element, scope?: Element | null): string | undefined {
   const root = el.getRootNode();

@@ -47,6 +47,18 @@ describe('createShortcutMatcher', () => {
     expect(matches(press({ key: 'π', code: 'KeyP', altKey: true }))).toBe(true);
   });
 
+  it('falls back to the physical key on non-Latin layouts', () => {
+    const matches = createShortcutMatcher('Mod+Shift+F', false);
+    expect(matches(press({ key: 'А', code: 'KeyF', ctrlKey: true, shiftKey: true }))).toBe(true);
+  });
+
+  it('follows the layout when the key is already a Latin letter', () => {
+    const matches = createShortcutMatcher('Mod+A', false);
+    // AZERTY: the key labelled A sits where US has Q, and vice versa.
+    expect(matches(press({ key: 'a', code: 'KeyQ', ctrlKey: true }))).toBe(true);
+    expect(matches(press({ key: 'q', code: 'KeyA', ctrlKey: true }))).toBe(false);
+  });
+
   it('ignores keys that do not match', () => {
     const matches = createShortcutMatcher('Mod+Shift+F', false);
     expect(matches(press({ key: 'f', code: 'KeyF', ctrlKey: true }))).toBe(false);

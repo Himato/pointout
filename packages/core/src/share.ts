@@ -9,7 +9,7 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
-// For http pages and browsers that refuse the async clipboard.
+/** For http pages and browsers that refuse the async clipboard. */
 function copyWithTextarea(text: string): boolean {
   const previousFocus = document.activeElement;
   const area = h('textarea');
@@ -19,7 +19,7 @@ function copyWithTextarea(text: string): boolean {
   document.body.append(area);
   area.select();
   try {
-    // Deprecated, yet still the only fallback that works when the async clipboard is refused.
+    // Deprecated, and still the only thing that works here.
     return document.execCommand('copy');
   } catch {
     return false;

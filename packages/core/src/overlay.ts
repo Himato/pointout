@@ -34,11 +34,6 @@ export class Overlay {
     this.stopTracking = null;
   }
 
-  destroy(): void {
-    this.hide();
-    this.box.remove();
-  }
-
   private place(): void {
     if (!this.target?.isConnected) return this.hide();
     const rect = this.target.getBoundingClientRect();

@@ -26,8 +26,10 @@ function resolveIvy(ng: IvyDebugApi, el: Element): OwnerInfo | null {
 
   const chain: string[] = [];
   let current = cmp;
-  for (let depth = 0; depth < MAX_DEPTH && !isRouted(ng.getHostElement(current)); depth++) {
-    const parent = ng.getOwningComponent(ng.getHostElement(current));
+  for (let depth = 0; depth < MAX_DEPTH; depth++) {
+    const currentHost = ng.getHostElement(current);
+    if (isRouted(currentHost)) break;
+    const parent = ng.getOwningComponent(currentHost);
     if (!parent) break;
     chain.push(ivyName(parent));
     current = parent;
