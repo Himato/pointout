@@ -37,8 +37,10 @@ interface OwnerInfo {
 Three rules.
 
 1. **Never throw.** The core catches you anyway, logs once and moves on. Do not make it.
-2. **Return `null` when unsure.** A wrong component name is worse than none. The core falls back to `domOwner`.
-3. **`scope` and `file` are optional.** Set `scope` only if it really contains `el`. The core ignores it otherwise.
+2. **Return `null` when unsure.** A wrong name is worse than none.
+   The core falls back to `domOwner`.
+3. **`scope` and `file` are optional.** Set `scope` only if it really contains `el`.
+   The core ignores it otherwise.
 
 `scope` never lands in storage or in the brief. It only shapes the selector.
 
@@ -119,10 +121,11 @@ Mount it in dev only. The core README shows how.
 ## Test it
 
 Fake the framework globals or internals over a small jsdom tree, then assert the `OwnerInfo`.
-[`packages/angular/src/resolver.spec.ts`](../packages/angular/src/resolver.spec.ts) does exactly that.
+[`resolver.spec.ts`](../packages/angular/src/resolver.spec.ts) in the Angular adapter does exactly that.
 Add one test that throws inside your lookup and expects `null`.
 
 ## Ship it
 
-Copy `packages/angular` as a starting point: tsup, Vitest, `sideEffects: false`, `@pointout/core` as a peer.
+Copy `packages/angular` as a starting point.
+tsup, Vitest, `sideEffects: false`, `@pointout/core` as a peer.
 Open a PR. We will be happy to see it.

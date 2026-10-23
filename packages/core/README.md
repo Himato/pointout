@@ -27,7 +27,7 @@ Everything else lives inside its shadow root, so your styles stay yours.
 
 ## Use it
 
-1. Press **Cmd+Shift+F** on macOS or **Ctrl+Shift+F** elsewhere. Or click the pill in the bottom right.
+1. Press **Cmd+Shift+F** on macOS or **Ctrl+Shift+F** elsewhere. Or click the pill.
 2. Hover. Pointout outlines whatever is under the cursor and names it.
 3. Click. Type what should change. **Enter** adds it, **Shift+Enter** is a new line, **Esc** bails.
 4. Open the pill menu and hit **Copy for Claude**.
@@ -87,7 +87,8 @@ Resolve each item in the component named; the selector is relative to that compo
 Each comment carries two owners.
 
 - `owner` comes from your framework adapter. It can be `null`.
-- `domOwner` is always there. The core finds the nearest `data-component`, `data-testid`, custom element, framework host attribute or labelled landmark, plus the closest heading.
+- `domOwner` is always there. The core finds the nearest `data-component`, `data-testid`,
+  custom element, framework host attribute or labelled landmark, plus the closest heading.
 
 So a plain HTML page still gets a useful brief. An adapter just makes it sharper.
 
@@ -95,8 +96,8 @@ When the adapter knows the component's source file, it lands in `owner.file`.
 The brief then reads `[AlertsTableComponent (src/app/alerts/alerts-table.component.ts) › #alerts-tbl]`.
 
 A comment can also carry `anchor`.
-That is a document-unique selector for whatever `selector` is relative to: the owner's host, or a shadow host.
-Badges use it to find the element again after a reload.
+That is a document-unique selector for whatever `selector` is relative to.
+Usually the owner's host, or a shadow host. Badges use it to find the element after a reload.
 
 Selectors prefer `#id`, then `[data-testid]`, then tag, stable classes and `:nth-of-type`.
 Generated junk like `ng-star-inserted` or `css-1x9fa2k` is skipped.

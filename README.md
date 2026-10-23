@@ -30,6 +30,7 @@ export const appConfig: ApplicationConfig = {
 ```
 
 Dev builds get Pointout. Production builds do not.
+No markup changes, no decorators.
 Older Angular, or no Angular at all? The package READMEs have you covered.
 
 ## The shortcut
@@ -74,7 +75,21 @@ The JSON adds inputs, parent chain, bounding box and a DOM fallback owner.
 
 ## Write an adapter
 
-It is one function and about 30 lines. [docs/adapters.md](docs/adapters.md) walks you through it.
+An adapter is one function. Give it an element, get back the component that owns it, or `null`.
+
+```ts
+import { mountPointout, type OwnerResolver } from '@pointout/core';
+
+const myResolver: OwnerResolver = (el) => {
+  const name = findComponentName(el); // your framework's dev hooks
+  return name ? { framework: 'mine', component: name, chain: [] } : null;
+};
+
+mountPointout({ appName: 'My app', resolveOwner: myResolver });
+```
+
+Never throw, and say `null` when unsure.
+[docs/adapters.md](docs/adapters.md) has the full contract and a React sketch.
 
 ## Develop
 

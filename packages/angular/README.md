@@ -69,7 +69,8 @@ Click things. Type what is wrong. Hit **Copy for Claude**. Paste into Claude Cod
 | None (prod build, no `ng`) | nothing                 | `null`, so the core falls back to its DOM owner         |
 
 Signal inputs are unwrapped. Functions, observables, DOM nodes and anything that throws are left out.
-The resolver never throws. When it is not sure, it says `null` and the core still writes a decent brief.
+The resolver never throws. When it is not sure, it says `null`.
+The core still writes a decent brief.
 
 ## Staging
 
@@ -78,11 +79,14 @@ Want it on a staging build where `ngDevMode` is false?
 ```ts
 import { providePointoutAlways } from '@pointout/angular/always';
 
-providers: [providePointoutAlways({ appName: 'My app (staging)' })];
+export const appConfig: ApplicationConfig = {
+  providers: [providePointoutAlways({ appName: 'My app (staging)' })],
+};
 ```
 
 It has its own import on purpose.
-Bundlers emit a chunk for every `import()` they see in a file, so sharing one with `providePointout` would ship Pointout to prod.
+Bundlers emit a chunk for every `import()` they see in a file.
+Sharing a file with `providePointout` would ship Pointout to prod.
 
 Your call. Just keep it away from real users.
 

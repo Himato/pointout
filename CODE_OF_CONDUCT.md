@@ -13,5 +13,5 @@ Breaking this gets you warned, then removed.
 
 ## Reporting
 
-Open a private report through [GitHub security advisories](https://github.com/pointout/pointout/security/advisories/new) or reach a maintainer directly.
-Reports stay confidential.
+Open a [private report](https://github.com/pointout/pointout/security/advisories/new)
+or reach a maintainer directly. Reports stay confidential.
