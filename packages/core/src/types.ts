@@ -21,6 +21,8 @@ export interface PointoutOptions {
   screenshot?: (el: Element) => Promise<string | null>;
   /** Defaults to `defaultFormatter`. */
   formatter?: ExportFormatter;
+  /** Sync with a local Pointout hub. `true` means `http://127.0.0.1:7331`. Off by default. */
+  server?: boolean | string;
 }
 
 /** A framework adapter: names the component that owns `el`, or returns null. */
@@ -64,6 +66,8 @@ export interface PointoutHandle {
 
 /** One comment, with everything needed to find the element again. */
 export interface PointoutComment {
+  /** Random and stable. The hub matches comments by it. */
+  id: string;
   n: number;
   comment: string;
   url: string;
@@ -81,6 +85,29 @@ export interface PointoutComment {
   viewport: { w: number; h: number; colorScheme: 'light' | 'dark' };
   createdAt: string;
   screenshotDataUrl?: string;
+  /** The Claude session this comment is addressed to. Set at creation or at the first sync. */
+  sessionId?: string;
+  /** Owned by the hub, mirrored here. Undefined means open. */
+  status?: 'open' | 'resolved';
+  /** Owned by the hub, mirrored here. */
+  replies?: PointoutReply[];
+}
+
+/** One message in a comment's thread. `at` is an ISO timestamp. */
+export interface PointoutReply {
+  from: 'claude' | 'user';
+  text: string;
+  at: string;
+}
+
+/** `'off'` without a `server` option or before the first contact, then whatever the hub last said. */
+export type SyncState = 'off' | 'offline' | 'connected';
+
+/** A live Claude Code session registered with the hub. */
+export interface SyncSession {
+  id: string;
+  name: string;
+  project: string;
 }
 
 /** Everything an export contains. */

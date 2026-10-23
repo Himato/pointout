@@ -3,6 +3,7 @@ import { createCommentStore, storageKey } from './storage';
 import type { PointoutComment } from './types';
 
 const comment: PointoutComment = {
+  id: 'c1',
   n: 1,
   comment: 'Too much padding',
   url: '/',

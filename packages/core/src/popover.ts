@@ -1,14 +1,12 @@
-import { h } from './dom';
+import { h, placeNear, type Anchor } from './dom';
+import { trapTab } from './focus-trap';
 
 export interface PopoverRequest {
-  anchor: DOMRect;
+  anchor: Anchor;
   title: string;
   onAdd: (comment: string) => void;
   onCancel: () => void;
 }
-
-const GAP = 8;
-const EDGE = 8;
 
 /** Comment box anchored to the selected element. Enter adds, Shift+Enter breaks a line, Esc cancels. */
 export class Popover {
@@ -53,7 +51,7 @@ export class Popover {
     this.title.title = request.title;
     this.input.value = '';
     this.panel.hidden = false;
-    this.place(request.anchor);
+    placeNear(this.panel, request.anchor);
     this.input.focus();
   }
 
@@ -91,35 +89,7 @@ export class Popover {
       event.preventDefault();
       this.submit();
     } else if (event.key === 'Tab') {
-      this.trapFocus(event);
+      trapTab(event, [this.input, this.cancelButton, this.addButton]);
     }
   }
-
-  private trapFocus(event: KeyboardEvent): void {
-    const stops: HTMLElement[] = [this.input, this.cancelButton, this.addButton];
-    const active = (this.panel.getRootNode() as ShadowRoot).activeElement;
-    const index = stops.indexOf(active as HTMLElement);
-    const next = (index + (event.shiftKey ? -1 : 1) + stops.length) % stops.length;
-    event.preventDefault();
-    stops[next]?.focus();
-  }
-
-  /** Below the element when it fits, above when it does not, always inside the viewport. */
-  private place(anchor: DOMRect): void {
-    const { innerWidth: vw, innerHeight: vh } = window;
-    const width = this.panel.offsetWidth || 320;
-    const height = this.panel.offsetHeight || 160;
-
-    let top = anchor.bottom + GAP;
-    if (top + height > vh - EDGE) top = anchor.top - GAP - height;
-    top = clamp(top, EDGE, vh - height - EDGE);
-    const left = clamp(anchor.left, EDGE, vw - width - EDGE);
-
-    this.panel.style.top = `${top}px`;
-    this.panel.style.left = `${left}px`;
-  }
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(value, Math.max(min, max)));
 }

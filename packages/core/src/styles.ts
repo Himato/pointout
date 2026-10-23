@@ -17,6 +17,7 @@ export const styles = /* css */ `
   --po-surface: #f5f4ef;
   --po-accent: #c96442;
   --po-accent-fg: #ffffff;
+  --po-ok: #2f8f5b;
   --po-outline: #c96442;
   --po-outline-fill: rgba(201, 100, 66, 0.08);
   --po-shadow: 0 8px 28px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -33,6 +34,7 @@ export const styles = /* css */ `
     --po-border: rgba(240, 238, 230, 0.16);
     --po-surface: #30302e;
     --po-accent: #d97757;
+    --po-ok: #4fb37d;
     --po-outline: #e08a6c;
     --po-outline-fill: rgba(224, 138, 108, 0.12);
     --po-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -57,7 +59,7 @@ button {
   cursor: pointer;
 }
 
-button:focus-visible, textarea:focus-visible {
+button:focus-visible, textarea:focus-visible, .badge:focus-visible {
   outline: 2px solid var(--po-accent);
   outline-offset: 2px;
 }
@@ -93,7 +95,8 @@ button:focus-visible, textarea:focus-visible {
 /* Numbered badges */
 .badge {
   position: fixed;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
@@ -104,6 +107,7 @@ button:focus-visible, textarea:focus-visible {
   text-align: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
+.badge.resolved { background: var(--po-ok); }
 .badge.gone { opacity: 0.4; filter: grayscale(1); }
 
 /* Comment popover */
@@ -159,6 +163,23 @@ button:focus-visible, textarea:focus-visible {
 }
 .btn.primary:hover { filter: brightness(1.06); }
 
+/* Thread popover */
+.thread-comment { margin: 0 0 10px; white-space: pre-wrap; }
+.thread-replies:empty { display: none; }
+.thread-replies {
+  max-height: 220px;
+  overflow: auto;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border-left: 2px solid var(--po-border);
+}
+.thread-reply + .thread-reply { margin-top: 8px; }
+.thread-reply > :last-child { white-space: pre-wrap; }
+.thread-meta { color: var(--po-muted); font-size: 11px; }
+.thread-status { margin: 0; color: var(--po-muted); font-size: 11px; }
+.thread[data-resolved] .thread-status { color: var(--po-ok); font-weight: 600; }
+.thread-delete { margin-right: auto; }
+
 /* Pill and menu */
 .pill {
   position: fixed;
@@ -186,6 +207,15 @@ button:focus-visible, textarea:focus-visible {
   background: var(--po-muted);
 }
 .pill[data-on] .pill-dot { background: var(--po-accent); box-shadow: 0 0 0 3px var(--po-outline-fill); }
+.pill-sync {
+  width: 6px;
+  height: 6px;
+  margin: 0 -2px 0 4px;
+  align-self: center;
+  border-radius: 50%;
+  background: var(--po-muted);
+}
+.pill-sync[data-state='connected'] { background: var(--po-ok); }
 .pill-count {
   min-width: 18px;
   padding: 0 6px;
@@ -227,6 +257,7 @@ button:focus-visible, textarea:focus-visible {
 .menu-item[aria-checked='true']::after { content: '✓'; color: var(--po-accent); }
 .menu-sep { height: 1px; margin: 5px 4px; background: var(--po-border); }
 .menu-label { padding: 4px 10px 2px; color: var(--po-muted); font-size: 11px; }
+.menu-note { padding: 6px 10px; color: var(--po-muted); }
 
 .toast {
   position: fixed;

@@ -4,7 +4,10 @@ import { buildAnchor, buildSelector } from './selector';
 import type { OwnerInfo, OwnerResolver, PointoutComment } from './types';
 
 export type Viewport = PointoutComment['viewport'];
-export type Capture = Omit<PointoutComment, 'n' | 'comment' | 'createdAt' | 'screenshotDataUrl'>;
+export type Capture = Omit<
+  PointoutComment,
+  'id' | 'n' | 'comment' | 'createdAt' | 'screenshotDataUrl' | 'sessionId' | 'status' | 'replies'
+>;
 
 /** Wraps an adapter so a throw becomes `null` and one warning, never a broken page. */
 export function guardResolver(

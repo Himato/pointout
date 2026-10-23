@@ -9,6 +9,9 @@ export type {
   ExportFormatter,
   PointoutComment,
   PointoutBundle,
+  PointoutReply,
+  SyncState,
+  SyncSession,
   SelectMode,
   StorageMode,
 } from './types';

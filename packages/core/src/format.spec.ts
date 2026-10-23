@@ -10,6 +10,7 @@ const bundle: PointoutBundle = {
   viewport,
   comments: [
     {
+      id: 'c1',
       n: 1,
       comment: 'Header should stick on scroll',
       url: '/alerts',
@@ -28,6 +29,7 @@ const bundle: PointoutBundle = {
       createdAt: '2026-10-23T08:58:00.000Z',
     },
     {
+      id: 'c2',
       n: 2,
       comment: 'Wrong colour\nShould be red',
       url: '/alerts?tab=open',
@@ -98,5 +100,30 @@ describe('defaultFormatter', () => {
     const text = defaultFormatter({ ...bundle, comments: [{ ...first!, text: '' }] });
     expect(text).toContain('1. [AlertsTableComponent › #alerts-tbl] on /alerts\n');
     expect(text).not.toContain('— ""');
+  });
+
+  it('lists open items only and counts both kinds once anything is resolved', () => {
+    const [first, second] = bundle.comments;
+    const mixed = {
+      ...bundle,
+      comments: [
+        { ...first!, status: 'resolved' as const },
+        { ...second!, status: 'open' as const },
+      ],
+    };
+    const text = defaultFormatter(mixed);
+    const brief = text.slice(0, text.indexOf('```json'));
+
+    expect(brief).toContain('1 open, 1 resolved, viewport 1440×900, dark');
+    expect(brief).not.toContain('Header should stick on scroll');
+    expect(brief).toContain('2. [<section "SLA breach alerts"> › tr:nth-of-type(3)]');
+    const json = /```json\n([\s\S]*)\n```$/.exec(text)?.[1] ?? '';
+    expect(JSON.parse(json)).toEqual(mixed);
+  });
+
+  it('says items when nothing is resolved, open status included', () => {
+    const [first] = bundle.comments;
+    const text = defaultFormatter({ ...bundle, comments: [{ ...first!, status: 'open' }] });
+    expect(text).toContain('\n1 items, viewport');
   });
 });

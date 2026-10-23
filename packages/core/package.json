@@ -32,6 +32,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./format": {
+      "types": "./dist/format.d.ts",
+      "import": "./dist/format.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "format": [
+        "./dist/format.d.ts"
+      ]
     }
   },
   "publishConfig": {

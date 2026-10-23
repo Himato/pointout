@@ -4,6 +4,7 @@ import { resolveDomOwner } from './dom-owner';
 import { defaultFormatter, ownerLabel } from './format';
 import { attachHitTest } from './hit-test';
 import { locateComment } from './locate';
+import { mergeRecords, newId, withIds, type HubRecord } from './merge';
 import { Overlay } from './overlay';
 import { Pill } from './pill';
 import { Popover } from './popover';
@@ -12,12 +13,16 @@ import { createShortcutMatcher, type ShortcutMatcher } from './shortcut';
 import { createCommentStore, type CommentStore } from './storage';
 import { copyText, downloadFile } from './share';
 import { styles } from './styles';
+import { createSync, hubUrl, type Sync } from './sync';
+import { Thread } from './thread';
 import type {
   OwnerInfo,
   PointoutBundle,
   PointoutComment,
   PointoutOptions,
   SelectMode,
+  SyncSession,
+  SyncState,
 } from './types';
 
 /** `<point-out>`: owns the state and wires the small pieces together. */
@@ -32,10 +37,15 @@ export class PointoutElement extends HTMLElement {
   private matchesShortcut: ShortcutMatcher = createShortcutMatcher('Mod+Shift+F');
   private hovered: Element | null = null;
   private detachHitTest: (() => void) | null = null;
+  private sync: Sync | null = null;
+  private syncState: SyncState = 'off';
+  private sessions: SyncSession[] = [];
+  private target: SyncSession | null = null;
 
   private readonly ui: HTMLElement;
   private readonly overlay: Overlay;
   private readonly commentPopover: Popover;
+  private readonly thread: Thread;
   private readonly badges: Badges;
   private readonly pill: Pill;
 
@@ -51,15 +61,22 @@ export class PointoutElement extends HTMLElement {
     this.badges = new Badges(this.ui, {
       locate: (comment) => this.locate(comment),
       currentUrl: () => this.currentUrl(),
+      onOpen: (comment) => this.openThread(comment),
     });
     this.overlay = new Overlay(this.ui);
     this.commentPopover = new Popover(this.ui);
+    this.thread = new Thread(this.ui, {
+      resolve: (comment) => this.setStatus(comment.id, 'resolved'),
+      reopen: (comment) => this.setStatus(comment.id, 'open'),
+      remove: (comment) => this.deleteComment(comment.id),
+    });
     this.pill = new Pill(this.ui, {
       toggle: () => this.toggle(),
       copy: () => void this.copyForClaude(),
       download: () => this.download(),
       clear: () => this.clear(),
       setMode: (mode) => this.setMode(mode),
+      setSession: (id) => this.sync?.setSession(id),
       off: () => this.toggle(false),
     });
   }
@@ -70,7 +87,11 @@ export class PointoutElement extends HTMLElement {
     this.store = createCommentStore(options.appName, options.storage ?? 'session');
     this.resolveOwner = guardResolver(options.resolveOwner);
     this.matchesShortcut = createShortcutMatcher(options.shortcut ?? 'Mod+Shift+F');
-    this.comments = this.store.load();
+    const stored = this.store.load();
+    this.comments = withIds(stored);
+    if (this.comments !== stored) this.store.save(this.comments);
+    this.sync?.stop();
+    this.sync = options.server ? this.createSync(options.server) : null;
     this.render();
   }
 
@@ -97,10 +118,13 @@ export class PointoutElement extends HTMLElement {
         onSelect: (el) => this.select(el),
       });
       this.badges.show(this.comments);
+      this.sync?.start();
     } else {
+      this.sync?.stop();
       this.detachHitTest?.();
       this.detachHitTest = null;
       this.commentPopover.close();
+      this.thread.close();
       this.dropHover();
       this.badges.hide();
       this.pill.setMenuOpen(false);
@@ -116,8 +140,8 @@ export class PointoutElement extends HTMLElement {
     this.comments = [];
     this.liveTargets.clear();
     this.store.clear();
-    if (this.on) this.badges.show(this.comments);
-    this.render();
+    this.refreshViews();
+    this.sync?.push();
   }
 
   exportText(): string {
@@ -155,6 +179,7 @@ export class PointoutElement extends HTMLElement {
 
   private select(el: Element): void {
     if (this.commentPopover.isOpen) return;
+    this.thread.close();
     const capture = captureElement(el, this.resolveOwner(el), this.currentUrl());
     const label = ownerLabel(capture.owner, capture.domOwner);
     this.hovered = el;
@@ -170,6 +195,7 @@ export class PointoutElement extends HTMLElement {
   private async add(el: Element, capture: Capture, text: string): Promise<void> {
     const n = this.comments.reduce((max, c) => Math.max(max, c.n), 0) + 1;
     const comment: PointoutComment = {
+      id: newId(),
       n,
       comment: text,
       ...capture,
@@ -181,8 +207,9 @@ export class PointoutElement extends HTMLElement {
     this.dropHover();
 
     const shot = await this.takeScreenshot(el);
-    if (shot && this.comments.includes(comment)) {
-      comment.screenshotDataUrl = shot;
+    const stored = this.comments.find((c) => c.id === comment.id);
+    if (shot && stored) {
+      stored.screenshotDataUrl = shot;
       this.persist();
     }
   }
@@ -201,10 +228,62 @@ export class PointoutElement extends HTMLElement {
     }
   }
 
+  /** The one write path: storage, every view, then the hub. */
   private persist(): void {
     this.store.save(this.comments);
+    this.refreshViews();
+    this.sync?.push();
+  }
+
+  private refreshViews(): void {
     if (this.on) this.badges.show(this.comments);
+    this.thread.sync(this.comments);
     this.render();
+  }
+
+  private createSync(server: true | string): Sync {
+    return createSync({
+      url: hubUrl(server),
+      app: this.options.appName,
+      getComments: () => this.comments,
+      onState: (state, sessions, target) => {
+        this.syncState = state;
+        this.sessions = sessions;
+        this.target = target;
+        this.render();
+      },
+      onMerge: (records) => this.merge(records),
+    });
+  }
+
+  private merge(records: HubRecord[]): void {
+    const result = mergeRecords(this.comments, records);
+    if (!result) return;
+    this.comments = result.comments;
+    this.store.save(this.comments);
+    this.refreshViews();
+    if (result.flash) this.pill.flash(result.flash);
+  }
+
+  private openThread(comment: PointoutComment): void {
+    this.commentPopover.close();
+    this.dropHover();
+    const live = this.locate(comment)?.getBoundingClientRect();
+    const top = live?.top ?? comment.bbox.y - window.scrollY;
+    const left = live?.left ?? comment.bbox.x - window.scrollX;
+    this.thread.open(comment, { top, left, bottom: live?.bottom ?? top + comment.bbox.h });
+  }
+
+  private setStatus(id: string, status: 'open' | 'resolved'): void {
+    this.comments = this.comments.map((c) => (c.id === id ? { ...c, status } : c));
+    this.persist();
+  }
+
+  private deleteComment(id: string): void {
+    const gone = this.comments.find((c) => c.id === id);
+    if (gone) this.liveTargets.delete(gone.n);
+    this.comments = this.comments.filter((c) => c.id !== id);
+    this.persist();
   }
 
   private locate(comment: PointoutComment): Element | null {
@@ -239,7 +318,14 @@ export class PointoutElement extends HTMLElement {
   }
 
   private render(): void {
-    this.pill.render({ on: this.on, count: this.comments.length, mode: this.mode });
+    this.pill.render({
+      on: this.on,
+      count: this.comments.length,
+      mode: this.mode,
+      sync: this.syncState,
+      sessions: this.sessions,
+      target: this.target,
+    });
   }
 
   private readonly onKeydown = (event: KeyboardEvent): void => {

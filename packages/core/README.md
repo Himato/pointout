@@ -48,6 +48,7 @@ They survive reloads and route changes, and fade out when their element is gone.
 | `storage`      | `'session'`          | `'session'`, `'local'` or `'none'`.                                         |
 | `screenshot`   | none                 | `(el) => Promise<dataUrl \| null>`. Bring your own capture.                 |
 | `formatter`    | `defaultFormatter`   | `(bundle) => string`. Change how Copy for Claude reads.                     |
+| `server`       | off                  | `true` or a hub URL. Syncs comments with Claude Code, see below.            |
 
 `mountPointout` returns a handle:
 
@@ -84,6 +85,9 @@ Resolve each item in the component named; the selector is relative to that compo
 ```
 ````
 
+Resolved comments stay in the JSON but drop out of the brief.
+The count line then reads `2 open, 1 resolved, viewport …`.
+
 Each comment carries two owners.
 
 - `owner` comes from your framework adapter. It can be `null`.
@@ -99,8 +103,47 @@ A comment can also carry `anchor`.
 That is a document-unique selector for whatever `selector` is relative to.
 Usually the owner's host, or a shadow host. Badges use it to find the element after a reload.
 
+The rest of a comment, in short:
+
+| Field       | What it is                                                     |
+| ----------- | -------------------------------------------------------------- |
+| `id`        | Random and stable. Old stored comments get one on load.        |
+| `n`         | The number on the badge.                                       |
+| `sessionId` | The Claude session it was sent to, once synced.                |
+| `status`    | `'open'` or `'resolved'`. Missing means open. Claude owns it.  |
+| `replies`   | `{ from: 'claude' \| 'user', text, at }[]`. Claude owns these. |
+
 Selectors prefer `#id`, then `[data-testid]`, then tag, stable classes and `:nth-of-type`.
 Generated junk like `ng-star-inserted` or `css-1x9fa2k` is skipped.
+
+## Sync with Claude
+
+Copy and paste works fine. Skipping it works better.
+
+```ts
+mountPointout({ appName: 'My app', server: true });
+```
+
+Pointout then talks to a local hub on `http://127.0.0.1:7331`.
+Pass a URL instead of `true` if yours lives elsewhere.
+Nothing is fetched without this option.
+
+- A small dot shows up in the pill. Green means connected, grey means the hub is not there.
+- Comments go to the hub as you add them. Claude picks them up, replies and resolves.
+- Several Claude sessions live? The menu asks which one gets your comments.
+- Badges are clickable. One opens the thread: your comment, Claude's replies, Resolve, Reopen, Delete.
+- Resolved badges turn into a green check.
+
+Hub offline? Pointout keeps working, retries quietly, and Copy for Claude is still right there.
+The hub itself ships as [`@pointout/mcp`](../mcp).
+
+## Node
+
+`@pointout/core/format` has the formatter and the types, and nothing that needs a DOM.
+
+```ts
+import { defaultFormatter } from '@pointout/core/format';
+```
 
 ## Write an adapter
 

@@ -5,6 +5,8 @@ export interface BadgeSources {
   /** Finds the live element for a comment, or null when it is not on the page. */
   locate: (comment: PointoutComment) => Element | null;
   currentUrl: () => string;
+  /** A badge was clicked or activated from the keyboard. */
+  onOpen: (comment: PointoutComment) => void;
 }
 
 interface Badge {
@@ -15,7 +17,10 @@ interface Badge {
 
 const RELOCATE_EVERY_FRAMES = 30;
 
-/** Numbered markers on commented elements. Dimmed at the old spot when the element is gone. */
+/**
+ * Numbered markers on commented elements, a check once resolved. Dimmed at the old spot when the
+ * element is gone. Each one opens its thread.
+ */
 export class Badges {
   private readonly layer = h('div');
   private badges: Badge[] = [];
@@ -27,14 +32,13 @@ export class Badges {
     parent: HTMLElement,
     private readonly sources: BadgeSources,
   ) {
-    this.layer.setAttribute('aria-hidden', 'true');
     parent.appendChild(this.layer);
   }
 
   show(comments: PointoutComment[]): void {
     this.layer.replaceChildren();
     this.badges = comments.map((comment) => {
-      const node = h('div', 'badge', String(comment.n));
+      const node = this.badgeNode(comment);
       this.layer.append(node);
       return { comment, node, target: null };
     });
@@ -48,6 +52,25 @@ export class Badges {
     this.stopTracking = null;
     this.badges = [];
     this.layer.replaceChildren();
+  }
+
+  private badgeNode(comment: PointoutComment): HTMLElement {
+    const resolved = comment.status === 'resolved';
+    const node = h(
+      'div',
+      resolved ? 'badge resolved' : 'badge',
+      resolved ? '✓' : String(comment.n),
+    );
+    node.setAttribute('role', 'button');
+    node.tabIndex = 0;
+    node.setAttribute('aria-label', `Comment ${comment.n}${resolved ? ', resolved' : ''}`);
+    node.addEventListener('click', () => this.sources.onOpen(comment));
+    node.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      this.sources.onOpen(comment);
+    });
+    return node;
   }
 
   private update(): void {

@@ -20,7 +20,12 @@ afterEach(() => {
   handles.splice(0).forEach((h) => h.unmount());
   document.body.innerHTML = '';
   sessionStorage.clear();
+  vi.unstubAllGlobals();
 });
+
+function ui(): ShadowRoot {
+  return shadowOf(document.querySelector('point-out')!);
+}
 
 describe('mountPointout', () => {
   it('defines <point-out> once and appends it to the body', () => {
@@ -107,5 +112,96 @@ describe('mountPointout', () => {
 
     expect(handle.getComments()).toEqual([]);
     expect(sessionStorage.getItem('pointout:Mount test')).toBeNull();
+  });
+
+  it('gives every new comment its own id', () => {
+    document.body.innerHTML = `<p>a</p><span>b</span>`;
+    const handle = mount();
+    handle.toggle(true);
+    addComment(document.querySelector('p')!, 'One');
+    addComment(document.querySelector('span')!, 'Two');
+
+    const [one, two] = handle.getComments();
+    expect(one!.id).toEqual(expect.any(String));
+    expect(two!.id).toEqual(expect.any(String));
+    expect(one!.id).not.toBe(two!.id);
+  });
+
+  it('gives old stored comments an id on load, and keeps it', () => {
+    document.body.innerHTML = `<p>hi</p>`;
+    const handle = mount('Legacy');
+    handle.toggle(true);
+    addComment(document.querySelector('p')!, 'Old one');
+    handle.unmount();
+    const legacy = JSON.parse(sessionStorage.getItem('pointout:Legacy')!) as Array<{ id?: string }>;
+    legacy.forEach((comment) => delete comment.id);
+    sessionStorage.setItem('pointout:Legacy', JSON.stringify(legacy));
+
+    const [loaded] = mount('Legacy').getComments();
+    expect(loaded!.id).toEqual(expect.any(String));
+    expect(loaded!.comment).toBe('Old one');
+    expect(mount('Legacy').getComments()[0]!.id).toBe(loaded!.id);
+  });
+
+  it('opens a thread from a badge, resolves it and closes the comment popover', () => {
+    document.body.innerHTML = `<p>hi</p><span>there</span>`;
+    const handle = mount();
+    handle.toggle(true);
+    addComment(document.querySelector('p')!, 'Bigger');
+
+    click(document.querySelector('span')!);
+    const popover = ui().querySelector<HTMLElement>('.popover:not(.thread)')!;
+    expect(popover.hidden).toBe(false);
+
+    ui().querySelector<HTMLElement>('.badge')!.click();
+    const thread = ui().querySelector<HTMLElement>('.thread')!;
+    expect(popover.hidden).toBe(true);
+    expect(thread.hidden).toBe(false);
+
+    [...thread.querySelectorAll('button')].find((b) => b.textContent === 'Resolve')!.click();
+    expect(handle.getComments()[0]!.status).toBe('resolved');
+    expect(ui().querySelector('.badge')!.textContent).toBe('✓');
+    expect(handle.exportText()).toContain('0 open, 1 resolved');
+
+    [...thread.querySelectorAll('button')].find((b) => b.textContent === 'Delete')!.click();
+    expect(handle.getComments()).toEqual([]);
+    expect(thread.hidden).toBe(true);
+  });
+
+  it('fetches nothing unless server is set', () => {
+    const fetch = vi.fn();
+    vi.stubGlobal('fetch', fetch);
+    mount().toggle(true);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('shows the hub dot and merges what Claude said', async () => {
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    document.body.innerHTML = `<p>hi</p>`;
+    const replies = [{ from: 'claude', text: 'Done', at: '2026-10-23T09:00:00.000Z' }];
+    const session = { id: 's1', name: 'shop #1', project: 'shop' };
+    let comments: unknown[] = [];
+    const fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, json: () => Promise.resolve({ sessions: [session], comments }) }),
+    );
+    vi.stubGlobal('fetch', fetch);
+
+    const handle = mountPointout({ appName: 'Synced', server: true });
+    handles.push(handle);
+    expect(ui().querySelector<HTMLElement>('.pill-sync')!.hidden).toBe(true);
+    handle.toggle(true);
+    addComment(document.querySelector('p')!, 'Bigger');
+    await vi.waitFor(() =>
+      expect(ui().querySelector('.pill-sync')!.getAttribute('data-state')).toBe('connected'),
+    );
+    expect(ui().querySelector('.menu')!.textContent).toContain('Claude: shop #1');
+
+    const [mine] = handle.getComments();
+    comments = [{ id: mine!.id, sessionId: 's1', status: 'resolved', replies }];
+    await vi.waitFor(() => expect(handle.getComments()[0]!.status).toBe('resolved'), {
+      timeout: 4_000,
+    });
+    expect(handle.getComments()[0]).toMatchObject({ sessionId: 's1', replies });
+    expect(ui().querySelector('.toast')!.textContent).toBe('Resolved by Claude');
   });
 });

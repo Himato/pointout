@@ -10,10 +10,13 @@ export function ownerLabel(owner: PointoutComment['owner'], domOwner: DomOwnerIn
   return `<${domOwner.tag} "${domOwner.heading ?? domOwner.name}">`;
 }
 
-/** A short brief per comment, the closing note, then the whole bundle as fenced JSON. */
+/** A short brief per open comment, the closing note, then the whole bundle as fenced JSON. */
 export const defaultFormatter: ExportFormatter = (bundle) => {
   const { appName, createdAt, viewport, comments } = bundle;
-  const items = comments.map((c) => {
+  const open = comments.filter((c) => c.status !== 'resolved');
+  const resolved = comments.length - open.length;
+  const counts = resolved ? `${open.length} open, ${resolved} resolved` : `${open.length} items`;
+  const items = open.map((c) => {
     const file = c.owner?.file ? ` (${c.owner.file})` : '';
     const quote = c.text ? ` — "${c.text}"` : '';
     const head = `${c.n}. [${ownerLabel(c.owner, c.domOwner)}${file} › ${c.selector}] on ${c.url}${quote}`;
@@ -26,7 +29,7 @@ export const defaultFormatter: ExportFormatter = (bundle) => {
 
   return [
     `Pointout on ${appName} — ${createdAt}`,
-    `${comments.length} items, viewport ${viewport.w}×${viewport.h}, ${viewport.colorScheme}`,
+    `${counts}, viewport ${viewport.w}×${viewport.h}, ${viewport.colorScheme}`,
     '',
     ...items,
     '',
