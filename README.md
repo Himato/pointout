@@ -65,12 +65,48 @@ Resolve each item in the component named; the selector is relative to that compo
 Component, source file, selector, route, your words.
 The JSON adds inputs, parent chain, bounding box and a DOM fallback owner.
 
+## Talk to Claude directly
+
+Copy and paste works. Skipping it is nicer.
+
+1. Install the MCP once.
+2. Add `server: true` to Pointout.
+3. Comment in your app like always.
+4. Ask Claude to check Pointout. It reads, fixes, replies and resolves. Badges turn green.
+
+For every project on your machine:
+
+```sh
+claude mcp add --scope user pointout -- npx -y @pointout/mcp
+```
+
+Or for one project, in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "pointout": { "command": "npx", "args": ["-y", "@pointout/mcp"] }
+  }
+}
+```
+
+Then in `app.config.ts`:
+
+```ts
+providePointout({ appName: 'My app', server: true });
+```
+
+Each Claude chat gets its own session. Several open? The pill asks which one hears you.
+No MCP, no hub? Copy for Claude still works, no strings attached.
+The prompt `/mcp__pointout__triage` walks Claude through every open comment.
+
 ## Packages
 
 | Package                                   | What it does                                                 |
 | ----------------------------------------- | ------------------------------------------------------------ |
 | [`@pointout/core`](packages/core)         | The whole UI. Plain web component, zero deps, any framework. |
 | [`@pointout/angular`](packages/angular)   | Names the Angular component behind every click. Angular 2+.  |
+| [`@pointout/mcp`](packages/mcp)           | Local hub and MCP server. Claude reads, replies, resolves.   |
 | `@pointout/react`, `@pointout/vue`, yours | React and Vue adapters welcome.                              |
 
 ## Write an adapter

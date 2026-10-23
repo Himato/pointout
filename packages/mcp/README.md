@@ -85,6 +85,7 @@ ls ~/.pointout/*/                           # one JSON file per session
 ```
 
 Comments without a session wait in `_unassigned.json` until one shows up.
+Screenshots stay in the files. The brief never carries them.
 
 ## Local only
 

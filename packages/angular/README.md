@@ -60,6 +60,16 @@ Honest note: that form still ships an unused lazy chunk in prod. It never loads,
 Press **Cmd+Shift+F** on macOS or **Ctrl+Shift+F** elsewhere.
 Click things. Type what is wrong. Hit **Copy for Claude**. Paste into Claude Code.
 
+## Talk to Claude directly
+
+Add `server: true` and Claude Code reads your comments without the copy and paste:
+
+```ts
+providePointout({ appName: 'My app', server: true });
+```
+
+The two setup commands live in the [root README](../../README.md#talk-to-claude-directly).
+
 ## What gets resolved
 
 | Angular                    | Source                  | You get                                                 |

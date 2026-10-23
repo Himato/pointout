@@ -7,6 +7,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    providePointout({ appName: 'Pointout demo' }),
+    providePointout({ appName: 'Pointout demo', server: true }),
   ],
 };

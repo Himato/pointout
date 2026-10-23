@@ -23,6 +23,8 @@ Node 22. pnpm is pinned in `package.json`, corepack picks it up.
 | `pnpm format:check` | Prettier checks                           |
 | `pnpm check:bundle` | Proves Pointout stays out of prod bundles |
 
+Fresh clone? Run `pnpm build` before `lint` or `typecheck`. The adapters and the MCP read core's built types.
+
 A pre-commit hook runs Prettier and ESLint on staged files. You will barely notice it.
 
 ## Changesets
