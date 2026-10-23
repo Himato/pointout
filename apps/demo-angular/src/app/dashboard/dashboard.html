@@ -1,0 +1,50 @@
+<section id="overview" aria-labelledby="overview-title">
+  <h1 id="overview-title">Overview</h1>
+  <div class="cards">
+    <app-card label="Deploys today" value="12" [trend]="20" />
+    <app-card label="Error rate" value="0.4%" [trend]="-8" />
+    <app-card label="Open incidents" value="2" />
+  </div>
+</section>
+
+<section id="deploys" aria-labelledby="deploys-title">
+  <h2 id="deploys-title">Recent deploys</h2>
+  <table id="deploys-table" class="panel">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Service</th>
+        <th>Author</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (deploy of deploys; track deploy.id) {
+        <tr [attr.data-testid]="'deploy-' + deploy.id">
+          <td>{{ deploy.id }}</td>
+          <td>{{ deploy.service }}</td>
+          <td>{{ deploy.author }}</td>
+          <td [class]="deploy.status">{{ deploy.status }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
+
+<section id="team" aria-labelledby="team-title">
+  <h2 id="team-title">Team</h2>
+  <div class="panel team">
+    <p>Four people, one pager. Add someone to share the fun.</p>
+    <button type="button" class="primary" data-testid="invite-button" (click)="openInvite()">
+      Invite teammate
+    </button>
+    @if (invited(); as invite) {
+      <p class="invited">Invited {{ invite.email }} as {{ invite.role }}.</p>
+    }
+  </div>
+</section>
+
+<section id="news" aria-labelledby="news-title">
+  <h2 id="news-title">News</h2>
+  <app-release-notes />
+</section>

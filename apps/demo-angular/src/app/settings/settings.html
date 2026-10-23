@@ -1,0 +1,35 @@
+<h1>Settings</h1>
+
+<section id="profile" aria-labelledby="profile-title">
+  <form class="panel" [formGroup]="form" (ngSubmit)="save()">
+    <h2 id="profile-title">Profile</h2>
+    <label>
+      Name
+      <input formControlName="name" data-testid="profile-name" />
+    </label>
+    <label>
+      Email
+      <input type="email" formControlName="email" data-testid="profile-email" />
+    </label>
+    <label class="inline">
+      <input type="checkbox" formControlName="digest" />
+      Weekly digest email
+    </label>
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="form.invalid || form.pristine">Save</button>
+      @if (saved() && form.pristine) {
+        <span class="saved">Saved.</span>
+      }
+    </div>
+  </form>
+</section>
+
+<section id="appearance" aria-labelledby="appearance-title">
+  <div class="panel">
+    <h2 id="appearance-title">Appearance</h2>
+    <p>Currently {{ theme.current() }}. Pointout follows along.</p>
+    <button type="button" data-testid="theme-toggle" (click)="theme.toggle()">
+      Switch to {{ theme.current() === 'light' ? 'dark' : 'light' }}
+    </button>
+  </div>
+</section>

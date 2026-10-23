@@ -1,0 +1,73 @@
+@import '@angular/cdk/overlay-prebuilt.css';
+
+:root {
+  color-scheme: light;
+  --bg: light-dark(#f7f7f8, #121316);
+  --surface: light-dark(#ffffff, #1c1d22);
+  --border: light-dark(#e3e3e8, #2e3038);
+  --text: light-dark(#18181b, #ececf1);
+  --muted: light-dark(#6b6b76, #9a9aa6);
+  --accent: light-dark(#4f46e5, #8b85ff);
+  --good: light-dark(#15803d, #4ade80);
+  --bad: light-dark(#b91c1c, #f87171);
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    15px/1.5 system-ui,
+    sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+input,
+select {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--muted);
+}
+
+.panel {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}

@@ -1,0 +1,54 @@
+:host {
+  display: grid;
+  gap: 2rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  padding: 0;
+}
+
+th,
+td {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.live {
+  color: var(--good);
+}
+
+.failed {
+  color: var(--bad);
+}
+
+.rolling {
+  color: var(--accent);
+}
+
+.team {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.team p {
+  margin: 0;
+}
+
+.invited {
+  color: var(--good);
+}

@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:bundle": "echo \"todo: wave 3\"",
+    "check:bundle": "node scripts/check-bundle.mjs",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "pnpm build && changeset publish",
@@ -23,13 +23,14 @@
     "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
-    "*.{ts,js,json,md,yml,yaml}": "prettier --write",
-    "*.{ts,js}": "eslint --fix"
+    "*.{ts,js,mjs,json,md,yml,yaml,html,css}": "prettier --write",
+    "*.{ts,js,mjs}": "eslint --fix"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
+    "angular-eslint": "^22.6.0",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "lint-staged": "^17.6.0",
@@ -40,7 +41,10 @@
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
+      "@parcel/watcher",
       "esbuild",
+      "lmdb",
+      "msgpackr-extract",
       "simple-git-hooks"
     ]
   }
