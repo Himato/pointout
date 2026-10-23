@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pointout playground</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #fafaf7;
+        --fg: #1f1e1d;
+        --card: #ffffff;
+        --line: #e4e2da;
+      }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --bg: #1c1c1a;
+        --fg: #f0eee6;
+        --card: #262624;
+        --line: #3a3936;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      header,
+      main {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      section {
+        margin: 24px 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--card);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .panel {
+        position: fixed;
+        left: 16px;
+        bottom: 16px;
+        width: 240px;
+        padding: 12px;
+        border-radius: 10px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+      .spacer {
+        height: 60vh;
+      }
+    </style>
+  </head>
+  <body>
+    <header data-cmp="TopBarComponent">
+      <strong class="brand">Playground</strong>
+      <button id="theme" type="button">Toggle dark</button>
+    </header>
+
+    <main>
+      <section id="alerts" data-cmp="AlertsTableComponent">
+        <h2>SLA breach alerts</h2>
+        <table id="alerts-tbl">
+          <tr>
+            <th>Ticket</th>
+            <th>Late by</th>
+          </tr>
+          <tr class="row">
+            <td>INC-40</td>
+            <td>1h</td>
+          </tr>
+          <tr class="row">
+            <td>INC-41</td>
+            <td>2h</td>
+          </tr>
+          <tr class="row">
+            <td>INC-42</td>
+            <td>3h</td>
+          </tr>
+        </table>
+      </section>
+
+      <section aria-label="Team cards">
+        <h2>Team</h2>
+        <div class="cards">
+          <div class="card">
+            <h3 class="title">Ada</h3>
+            <p>Owns billing.</p>
+          </div>
+          <div class="card">
+            <h3 class="title">Linus</h3>
+            <p>Owns infra.</p>
+          </div>
+          <div class="card">
+            <h3 class="title">Grace</h3>
+            <p>Owns the compiler.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="clicks">
+        <h2>Page clicks</h2>
+        <p>Intercept mode should keep this counter still. Alt-click mode should not.</p>
+        <button id="counter" type="button" data-testid="counter">Clicked 0 times</button>
+      </section>
+
+      <section id="shadow">
+        <h2>Inside a shadow root</h2>
+        <fancy-widget></fancy-widget>
+      </section>
+
+      <div class="spacer"></div>
+    </main>
+
+    <aside class="panel" aria-label="Floating panel">
+      <h4>Fixed overlay panel</h4>
+      <button type="button">Snooze</button>
+    </aside>
+
+    <script type="module">
+      import { mountPointout } from '../dist/index.js';
+
+      customElements.define(
+        'fancy-widget',
+        class extends HTMLElement {
+          connectedCallback() {
+            this.attachShadow({ mode: 'open' }).innerHTML = `
+              <style>.box { padding: 12px; border: 1px dashed currentColor; border-radius: 8px; }</style>
+              <div class="box"><h4>Shadow heading</h4><button class="go">Go</button></div>`;
+          }
+        },
+      );
+
+      let clicks = 0;
+      const counter = document.querySelector('#counter');
+      counter.addEventListener('click', () => (counter.textContent = `Clicked ${++clicks} times`));
+
+      document.querySelector('#theme').addEventListener('click', () => {
+        const root = document.documentElement;
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      });
+
+      // Pretend framework adapter: the nearest [data-cmp] is the owning component.
+      const resolveOwner = (el) => {
+        const host = el.closest('[data-cmp]');
+        if (!host) return null;
+        const component = host.getAttribute('data-cmp');
+        return { framework: 'fake', component, chain: [component], scope: host };
+      };
+
+      window.pointout = mountPointout({ appName: 'Playground', resolveOwner });
+    </script>
+  </body>
+</html>
