@@ -13,7 +13,8 @@ export function ownerLabel(owner: PointoutComment['owner'], domOwner: DomOwnerIn
 export const defaultFormatter: ExportFormatter = (bundle) => {
   const { appName, createdAt, viewport, comments } = bundle;
   const items = comments.map((c) => {
-    const head = `${c.n}. [${ownerLabel(c.owner, c.domOwner)} › ${c.selector}] on ${c.url} — "${c.text}"`;
+    const file = c.owner?.file ? ` (${c.owner.file})` : '';
+    const head = `${c.n}. [${ownerLabel(c.owner, c.domOwner)}${file} › ${c.selector}] on ${c.url} — "${c.text}"`;
     const body = c.comment
       .split('\n')
       .map((line) => `   ${line}`)

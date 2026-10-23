@@ -64,6 +64,7 @@ Click things. Type what is wrong. Hit **Copy for Claude**. Paste into Claude Cod
 | Angular                    | Source                  | You get                                                 |
 | -------------------------- | ----------------------- | ------------------------------------------------------- |
 | Ivy, 9+                    | `ng.getOwningComponent` | component, chain up to the routed one, selector, inputs |
+| Ivy, 17.1+ dev builds      | `ɵcmp.debugInfo`        | real class name and source file path                    |
 | View Engine, 2 to 8        | `ng.probe` DebugElement | component, chain, tag name, bound properties            |
 | None (prod build, no `ng`) | nothing                 | `null`, so the core falls back to its DOM owner         |
 

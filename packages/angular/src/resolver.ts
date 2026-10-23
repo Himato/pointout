@@ -39,6 +39,7 @@ function resolveIvy(ng: IvyDebugApi, el: Element): OwnerInfo | null {
     chain,
     hint: selectorHint(def),
     props: ivyProps(cmp, def),
+    file: sourceFile(def),
     scope: host,
   };
 }
@@ -77,6 +78,12 @@ function componentDef(cmp: object): ComponentDef | undefined {
 /** Dev builds stamp the real class name on the def; esbuild may rename the class itself. */
 function ivyName(cmp: object): string {
   return componentDef(cmp)?.debugInfo?.className ?? className(cmp);
+}
+
+/** Angular 17.1+ dev builds only. */
+function sourceFile(def: ComponentDef | undefined): string | undefined {
+  const path = def?.debugInfo?.filePath;
+  return typeof path === 'string' && path ? path.replace(/^\.\//, '') : undefined;
 }
 
 function className(instance: unknown): string {

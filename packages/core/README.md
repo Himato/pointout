@@ -91,6 +91,13 @@ Each comment carries two owners.
 
 So a plain HTML page still gets a useful brief. An adapter just makes it sharper.
 
+When the adapter knows the component's source file, it lands in `owner.file`.
+The brief then reads `[AlertsTableComponent (src/app/alerts/alerts-table.component.ts) › #alerts-tbl]`.
+
+A comment can also carry `anchor`.
+That is a document-unique selector for whatever `selector` is relative to: the owner's host, or a shadow host.
+Badges use it to find the element again after a reload.
+
 Selectors prefer `#id`, then `[data-testid]`, then tag, stable classes and `:nth-of-type`.
 Generated junk like `ng-star-inserted` or `css-1x9fa2k` is skipped.
 

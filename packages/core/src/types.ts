@@ -28,6 +28,8 @@ export interface OwnerInfo {
   chain: string[];
   hint?: string;
   props?: Record<string, unknown>;
+  /** Source file of the component, as the framework reports it. */
+  file?: string;
   /** Selector root for this owner. Never stored or serialized. */
   scope?: Element;
 }
@@ -59,6 +61,11 @@ export interface PointoutComment {
   owner: Omit<OwnerInfo, 'scope'> | null;
   domOwner: DomOwnerInfo;
   selector: string;
+  /**
+   * Document-unique selector of the element `selector` is relative to: the owner's host, or the
+   * shadow host when the element lives in a shadow root. Absent when `selector` is document-unique.
+   */
+  anchor?: string;
   tag: string;
   text: string;
   bbox: { x: number; y: number; w: number; h: number };

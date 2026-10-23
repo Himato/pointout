@@ -3,7 +3,7 @@
 export interface ComponentDef {
   selectors?: unknown[][];
   inputs?: Record<string, unknown>;
-  debugInfo?: { className?: string };
+  debugInfo?: { className?: string; filePath?: string };
 }
 
 export interface IvyDebugApi {

@@ -15,7 +15,7 @@ export function isGeneratedToken(token: string): boolean {
  * `:nth-of-type`, walking up only while the selector is still ambiguous.
  */
 export function buildSelector(el: Element, scope?: Element | null): string {
-  const scopeEl = scope && scope !== el && scope.contains(el) ? scope : null;
+  const scopeEl = usableScope(el, scope);
   const root: QueryRoot = scopeEl ?? (el.getRootNode() as Document | ShadowRoot);
   const unique = (selector: string) => isUniqueMatch(root, selector, el);
 
@@ -32,6 +32,22 @@ export function buildSelector(el: Element, scope?: Element | null): string {
     current = parent && parent !== scopeEl ? parent : null;
   }
   return scopeEl && unique(`:scope > ${suffix}`) ? `:scope > ${suffix}` : suffix;
+}
+
+/**
+ * Document-unique selector of the element `buildSelector(el, scope)` is relative to, or
+ * undefined when that selector is already document-unique. One shadow level only: a host
+ * that itself sits inside a shadow root gets no anchor.
+ */
+export function buildAnchor(el: Element, scope?: Element | null): string | undefined {
+  const root = el.getRootNode();
+  const host = usableScope(el, scope) ?? (root instanceof ShadowRoot ? root.host : null);
+  if (!host || host.getRootNode() !== el.ownerDocument) return undefined;
+  return buildSelector(host);
+}
+
+function usableScope(el: Element, scope?: Element | null): Element | null {
+  return scope && scope !== el && scope.contains(el) ? scope : null;
 }
 
 function anchorSegments(el: Element): string[] {

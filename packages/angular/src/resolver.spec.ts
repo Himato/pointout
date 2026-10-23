@@ -123,6 +123,7 @@ describe('angularOwnerResolver on Ivy', () => {
       chain: ['AppPage'],
       hint: 'app-card',
     });
+    expect(owner?.file).toBeUndefined();
     expect(owner?.scope).toBe(card);
   });
 
@@ -145,12 +146,18 @@ describe('angularOwnerResolver on Ivy', () => {
     expect(angularOwnerResolver(button)?.chain).toEqual(['AppPage', 'AppRoot']);
   });
 
-  it('prefers the class name from debugInfo', () => {
+  it('prefers the class name from debugInfo and reads its file path', () => {
     Object.assign(AppCard, {
-      ɵcmp: { selectors: [['app-card']], debugInfo: { className: 'CardComponent' } },
+      ɵcmp: {
+        selectors: [['app-card']],
+        debugInfo: { className: 'CardComponent', filePath: './src/app/card.component.ts' },
+      },
     });
     try {
-      expect(angularOwnerResolver(button)?.component).toBe('CardComponent');
+      expect(angularOwnerResolver(button)).toMatchObject({
+        component: 'CardComponent',
+        file: 'src/app/card.component.ts',
+      });
     } finally {
       Object.assign(AppCard, { ɵcmp: { selectors: [['app-card']], inputs: {} } });
     }

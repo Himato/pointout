@@ -3,6 +3,7 @@ import { captureElement, defaultUrl, guardResolver, readViewport, type Capture }
 import { resolveDomOwner } from './dom-owner';
 import { defaultFormatter, ownerLabel } from './format';
 import { attachHitTest } from './hit-test';
+import { locateComment } from './locate';
 import { Overlay } from './overlay';
 import { Pill } from './pill';
 import { Popover } from './popover';
@@ -210,13 +211,7 @@ export class PointoutElement extends HTMLElement {
 
   private locate(comment: PointoutComment): Element | null {
     const live = this.liveTargets.get(comment.n)?.deref();
-    if (live?.isConnected) return live;
-    try {
-      const matches = document.querySelectorAll(comment.selector);
-      return matches.length === 1 ? (matches[0] ?? null) : null;
-    } catch {
-      return null;
-    }
+    return live?.isConnected ? live : locateComment(comment);
   }
 
   private setMode(mode: SelectMode): void {

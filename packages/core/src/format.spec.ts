@@ -84,4 +84,12 @@ describe('defaultFormatter', () => {
     const text = defaultFormatter({ ...bundle, comments: [noHeading] });
     expect(text).toContain('2. [<section "sla"> › tr:nth-of-type(3)]');
   });
+
+  it('names the source file next to the component when the owner has one', () => {
+    const [first] = bundle.comments;
+    const file = 'src/app/alerts/alerts-table.component.ts';
+    const withFile = { ...first!, owner: { ...first!.owner!, file } };
+    const text = defaultFormatter({ ...bundle, comments: [withFile] });
+    expect(text).toContain(`1. [AlertsTableComponent (${file}) › #alerts-tbl] on /alerts`);
+  });
 });

@@ -1,6 +1,6 @@
 import { collapseText } from './dom';
 import { resolveDomOwner } from './dom-owner';
-import { buildSelector } from './selector';
+import { buildAnchor, buildSelector } from './selector';
 import type { OwnerInfo, OwnerResolver, PointoutComment } from './types';
 
 export type Viewport = PointoutComment['viewport'];
@@ -45,11 +45,13 @@ function readColorScheme(): 'light' | 'dark' {
 
 export function captureElement(el: Element, owner: OwnerInfo | null, url: string): Capture {
   const rect = el.getBoundingClientRect();
+  const anchor = buildAnchor(el, owner?.scope);
   return {
     url,
     owner: owner ? storableOwner(owner) : null,
     domOwner: resolveDomOwner(el),
     selector: buildSelector(el, owner?.scope),
+    ...(anchor && { anchor }),
     tag: el.localName,
     text: collapseText(el.textContent),
     bbox: {
