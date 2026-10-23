@@ -59,6 +59,25 @@ describe('hub takeover', () => {
     await b.stop();
   });
 
+  it('retries the health probe once before calling a slow hub foreign', async () => {
+    let calls = 0;
+    const slow: Server = createServer((_req, res) => {
+      const answer = () => res.end(JSON.stringify({ ok: true, version: 'test' }));
+      if (calls++ === 0) setTimeout(answer, 1_500);
+      else answer();
+    });
+    await new Promise<void>((resolve) => slow.listen(port, '127.0.0.1', resolve));
+    try {
+      const client = instance(1);
+      await client.ensureHub();
+      expect(client.hub).toBeNull();
+      expect(calls).toBe(2);
+    } finally {
+      slow.closeAllConnections();
+      slow.close();
+    }
+  });
+
   it('refuses a port held by something else', async () => {
     const other: Server = createServer((_req, res) => res.end('hello'));
     await new Promise<void>((resolve) => other.listen(port, '127.0.0.1', resolve));

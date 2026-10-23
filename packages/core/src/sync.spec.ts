@@ -165,7 +165,7 @@ describe('createSync', () => {
 
   it('auto picks the single live session and sends unassigned comments to it', async () => {
     hub.sessions = [s1];
-    local = [comment('c1'), comment('c2', { sessionId: 'elsewhere' })];
+    local = [comment('c1'), comment('c2', { sessionId: 'elsewhere', status: 'resolved' })];
     sync.start();
     await flush();
 
@@ -282,6 +282,61 @@ describe('createSync', () => {
     hub.sessions = [s1, s2];
     await vi.advanceTimersByTimeAsync(3_000);
     expect(sync.target).toBeNull();
+  });
+
+  it('moves an open comment off a session that ended to the target', async () => {
+    hub.sessions = [s1];
+    hub.comments = [{ id: 'c1', sessionId: 'gone' }];
+    local = [comment('c1', { sessionId: 'gone' })];
+    sync.start();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments[0]!.sessionId).toBe('s1');
+  });
+
+  it('keeps a resolved comment on the session that ended', async () => {
+    hub.sessions = [s1];
+    local = [comment('c1', { sessionId: 'gone', status: 'resolved' })];
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300); // learns the live sessions
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments[0]!.sessionId).toBe('gone');
+  });
+
+  it('leaves a comment of an ended session alone when there is no target', async () => {
+    hub.sessions = [s1, s2];
+    local = [comment('c1', { sessionId: 'gone' })];
+    sync.start();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(sync.target).toBeNull();
+    expect(lastPutBody().comments[0]!.sessionId).toBe('gone');
+  });
+
+  it('logs a throwing onMerge once and keeps polling', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    onMerge.mockImplementation(() => {
+      throw new Error('boom');
+    });
+    sync.start();
+    await flush();
+    expect(warn).toHaveBeenCalledWith('[pointout] sync error', new Error('boom'));
+
+    await vi.advanceTimersByTimeAsync(3_000);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(onMerge).toHaveBeenCalledTimes(2);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it('schedules no push after stop()', async () => {
+    let answer: (value: unknown) => void = () => {};
+    fetch.mockImplementationOnce(() => new Promise((resolve) => (answer = resolve)));
+    local = [comment('c1')];
+    sync.start();
+    await flush();
+    sync.stop();
+    answer({ ok: true, json: () => Promise.resolve({ sessions: [s1], comments: [] }) });
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   it('stops polling on stop()', async () => {

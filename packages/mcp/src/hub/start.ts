@@ -61,8 +61,14 @@ export async function tryListen(options: HubOptions): Promise<ListenResult> {
   };
 }
 
-/** True when whoever holds the port answers `/health` like a Pointout hub. */
+/** True when whoever holds the port answers `/health` like a Pointout hub. A busy hub gets a second try. */
 async function isPointout(port: number): Promise<boolean> {
+  if (await probe(port)) return true;
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return probe(port);
+}
+
+async function probe(port: number): Promise<boolean> {
   try {
     const res = await fetch(`http://${HOST}:${port}/health`, {
       signal: AbortSignal.timeout(1_000),

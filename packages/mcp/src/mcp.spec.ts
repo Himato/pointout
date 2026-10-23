@@ -177,7 +177,7 @@ describe('mcp tools', () => {
     await other('cccccc', 'shop #9');
     await seed(hubComment('c1', { sessionId: 'cccccc' }));
 
-    const hint = `No comments for session ${session.info.name}. Live sessions with open comments: shop #9 (cccccc): 1 open. Pass session to read one.`;
+    const hint = `No comments for session ${session.info.name}. Live sessions with open comments: shop #9 (cccccc): 1 open. Pass session to read one.\nOpen comments left with ended sessions or in _unassigned move to a live session on the browser's next push.`;
     expect((await call('pointout_list')).text).toBe(hint);
     expect((await call('pointout_brief')).text).toBe(hint);
   });
@@ -185,7 +185,7 @@ describe('mcp tools', () => {
   it('says so plainly when nobody has comments', async () => {
     expect((await call('pointout_list')).json()).toEqual([]);
     expect((await call('pointout_brief')).text).toBe(
-      `No comments for session ${session.info.name} yet.`,
+      `No comments for session ${session.info.name} yet.\nOpen comments left with ended sessions or in _unassigned move to a live session on the browser's next push.`,
     );
   });
 });

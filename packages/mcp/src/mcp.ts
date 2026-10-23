@@ -11,6 +11,11 @@ export const TRIAGE =
   'given. After each fix call pointout_reply with one line on what changed, then ' +
   'pointout_resolve. Ask before touching anything outside those components.';
 
+/** The hub cannot list these, so Claude learns they exist and where they go. */
+const STRAYS =
+  'Open comments left with ended sessions or in _unassigned move to a live session on the ' +
+  "browser's next push.";
+
 class ToolError extends Error {}
 
 const ok = (text: string): CallToolResult => ({ content: [{ type: 'text', text }] });
@@ -55,7 +60,7 @@ export function createMcpServer(client: HubClient, session: Session): McpServer 
       if (comments.length) busy.push(`${other.name} (${other.id}): ${comments.length} open`);
     }
     if (!busy.length) return null;
-    return `No comments for session ${target.name}. Live sessions with open comments: ${busy.join(', ')}. Pass session to read one.`;
+    return `No comments for session ${target.name}. Live sessions with open comments: ${busy.join(', ')}. Pass session to read one.\n${STRAYS}`;
   }
 
   async function commentsOf(ref: string | undefined, status: StatusFilter) {
@@ -138,7 +143,7 @@ export function createMcpServer(client: HubClient, session: Session): McpServer 
       const { target, comments } = await commentsOf(ref, 'all');
       if (!comments.length) {
         const hint = ref ? null : await elsewhere(target);
-        return ok(hint ?? `No comments for session ${target.name} yet.`);
+        return ok(hint ?? `No comments for session ${target.name} yet.\n${STRAYS}`);
       }
       return ok(brief(comments, target.name));
     }),

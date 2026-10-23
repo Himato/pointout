@@ -54,6 +54,7 @@ export function createSync(deps: SyncDeps): Sync {
   // Id to edit count, so a click made while a push is in flight still goes out next time.
   const touched = new Map<string, number>();
   let edits = 0;
+  let lastError = '';
 
   let running = false;
   let pollTimer: ReturnType<typeof setTimeout> | undefined;
@@ -127,23 +128,44 @@ export function createSync(deps: SyncDeps): Sync {
     const firstContact = !contacted;
     contacted = true;
     const local = deps.getComments();
+    if (!running) return;
     if (behind || (firstContact && local.some((c) => !known.has(c.id)))) push();
     else if (!hadTarget) pushIfUnassigned();
   }
 
+  // Open comments follow a live session: one addressed to a chat that ended goes to the target.
+  function needsTarget(c: PointoutComment): boolean {
+    if (!c.sessionId) return true;
+    return c.status !== 'resolved' && !sessions.some((s) => s.id === c.sessionId);
+  }
+
   function pushIfUnassigned(): void {
-    if (target && deps.getComments().some((c) => !c.sessionId)) push();
+    if (target && deps.getComments().some(needsTarget)) push();
+  }
+
+  /** Runs a fire and forget task. A throwing callback is logged, never an unhandled rejection. */
+  function fire(task: () => Promise<void>): void {
+    task().catch((err: unknown) => {
+      const key = String(err);
+      if (key === lastError) return;
+      lastError = key;
+      console.warn('[pointout] sync error', err);
+    });
   }
 
   function schedule(ms: number): void {
     clearTimeout(pollTimer);
-    pollTimer = running ? setTimeout(() => void poll(), ms) : undefined;
+    pollTimer = running ? setTimeout(() => fire(poll), ms) : undefined;
   }
 
   async function poll(): Promise<void> {
-    const body = await request(`/state?app=${encodeURIComponent(deps.app)}`);
-    if (body) apply(body);
-    schedule(body ? POLL_MS : RETRY_MS);
+    let body: HubState | null = null;
+    try {
+      body = await request(`/state?app=${encodeURIComponent(deps.app)}`);
+      if (body) apply(body);
+    } finally {
+      schedule(body ? POLL_MS : RETRY_MS);
+    }
   }
 
   async function send(): Promise<void> {
@@ -152,7 +174,7 @@ export function createSync(deps: SyncDeps): Sync {
     behind = false;
     const comments = deps.getComments().map((comment) => {
       const out = { ...comment };
-      if (!out.sessionId && target) out.sessionId = target.id;
+      if (target && needsTarget(out)) out.sessionId = target.id;
       if (known.has(out.id)) delete out.screenshotDataUrl;
       if (!touched.has(out.id)) delete out.status;
       return out;
@@ -163,12 +185,16 @@ export function createSync(deps: SyncDeps): Sync {
       ? { app: deps.app, comments, deleted: gone }
       : { app: deps.app, comments };
     pushing++;
-    const body = await request('/comments', {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    pushing--;
+    let body: HubState | null;
+    try {
+      body = await request('/comments', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } finally {
+      pushing--;
+    }
     if (body) {
       for (const id of gone) deleted.delete(id);
       for (const [id, edit] of sentTouches) if (touched.get(id) === edit) touched.delete(id);
@@ -178,21 +204,21 @@ export function createSync(deps: SyncDeps): Sync {
 
   function push(): void {
     clearTimeout(pushTimer);
-    pushTimer = setTimeout(() => void send(), PUSH_DEBOUNCE_MS);
+    pushTimer = setTimeout(() => fire(send), PUSH_DEBOUNCE_MS);
   }
 
   return {
     start() {
       if (running) return;
       running = true;
-      void poll();
+      fire(poll);
     },
     stop() {
       running = false;
       clearTimeout(pollTimer);
       pollTimer = undefined;
       // Do not drop an edit that was about to go out.
-      if (pushTimer !== undefined) void send();
+      if (pushTimer !== undefined) fire(send);
     },
     push,
     forget(ids) {

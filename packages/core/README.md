@@ -132,6 +132,7 @@ Nothing is fetched without this option.
 - A small dot shows up in the pill. Green means connected, grey means the hub is not there.
 - Comments go to the hub as you add them. Claude picks them up, replies and resolves.
 - Several Claude sessions live? The menu asks which one gets your comments.
+- Open comments follow you to the next chat when the old one ends.
 - Badges are clickable. One opens the thread: your comment, Claude's replies, Resolve, Reopen, Delete.
 - Resolved badges turn into a green check.
 - Your Resolve and Reopen clicks reach the hub. Other pushes leave Claude's status alone.
