@@ -7,9 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "github:pointout/pointout",
+    "url": "git+https://github.com/pointout/pointout.git",
     "directory": "packages/angular"
   },
+  "homepage": "https://github.com/pointout/pointout/tree/main/packages/angular#readme",
+  "bugs": "https://github.com/pointout/pointout/issues",
   "keywords": [
     "pointout",
     "angular",

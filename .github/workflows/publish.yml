@@ -9,9 +9,10 @@ permissions:
   packages: write
   id-token: write
 
+# GitHub Packages takes the workflow's own token. Any other registry needs the NPM_TOKEN secret.
 env:
   REGISTRY_URL: ${{ vars.NPM_REGISTRY_URL || 'https://npm.pkg.github.com' }}
-  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ (vars.NPM_REGISTRY_URL && !contains(vars.NPM_REGISTRY_URL, 'npm.pkg.github.com')) && secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
 
 jobs:
   publish:

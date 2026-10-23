@@ -17,6 +17,7 @@ Node 22. pnpm is pinned in `package.json`, corepack picks it up.
 | ------------------- | ----------------------------------------- |
 | `pnpm build`        | Builds every package                      |
 | `pnpm test`         | Runs every test                           |
+| `pnpm typecheck`    | `tsc` over every package                  |
 | `pnpm lint`         | ESLint                                    |
 | `pnpm format`       | Prettier writes                           |
 | `pnpm format:check` | Prettier checks                           |

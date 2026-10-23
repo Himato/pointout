@@ -7,9 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "github:pointout/pointout",
+    "url": "git+https://github.com/pointout/pointout.git",
     "directory": "packages/core"
   },
+  "homepage": "https://github.com/pointout/pointout/tree/main/packages/core#readme",
+  "bugs": "https://github.com/pointout/pointout/issues",
   "keywords": [
     "pointout",
     "feedback",
