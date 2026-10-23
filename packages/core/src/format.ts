@@ -10,6 +10,12 @@ export function ownerLabel(owner: PointoutComment['owner'], domOwner: DomOwnerIn
   return `<${domOwner.tag} "${domOwner.heading ?? domOwner.name}">`;
 }
 
+/** `Component (file) › selector`, the way the brief names an element. */
+export function commentLabel(comment: PointoutComment): string {
+  const file = comment.owner?.file ? ` (${comment.owner.file})` : '';
+  return `${ownerLabel(comment.owner, comment.domOwner)}${file} › ${comment.selector}`;
+}
+
 /**
  * A short brief per open comment, the closing note, then the whole bundle as fenced JSON.
  * Screenshots stay out: a data URL is noise in a text brief. The .json download keeps them.
@@ -20,9 +26,8 @@ export const defaultFormatter: ExportFormatter = (bundle) => {
   const resolved = comments.length - open.length;
   const counts = resolved ? `${open.length} open, ${resolved} resolved` : `${open.length} items`;
   const items = open.map((c) => {
-    const file = c.owner?.file ? ` (${c.owner.file})` : '';
     const quote = c.text ? ` — "${c.text}"` : '';
-    const head = `${c.n}. [${ownerLabel(c.owner, c.domOwner)}${file} › ${c.selector}] on ${c.url}${quote}`;
+    const head = `${c.n}. [${commentLabel(c)}] on ${c.url}${quote}`;
     const body = c.comment
       .split('\n')
       .map((line) => `   ${line}`)

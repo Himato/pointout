@@ -16,7 +16,7 @@ export interface Registration {
   pid: number;
 }
 
-export const EXPIRE_MS = 30_000;
+const EXPIRE_MS = 30_000;
 const SWEEP_MS = 10_000;
 
 export type Sessions = ReturnType<typeof createSessions>;
@@ -96,11 +96,6 @@ export function createSessions(store: Store, now: () => number = Date.now) {
     rename,
     unregister,
     live,
-    sweep,
-    get: (id: string) => {
-      const session = registry.get(id);
-      return session && isLive(session) ? session : undefined;
-    },
     start() {
       timer ??= setInterval(sweep, SWEEP_MS);
       timer.unref();

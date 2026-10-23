@@ -41,6 +41,18 @@ describe('store', () => {
     expect(store.commentsForApp('Shop')).toEqual([]);
   });
 
+  it('ignores temp files left by a killed hub, and removes them on request', () => {
+    store.writeSession(
+      { project: 'shop', name: 's1' },
+      { version: 1, session: null, comments: [] },
+    );
+    writeFileSync(join(home, 'shop', 's1.json.4242.tmp'), '{ half');
+
+    expect(store.listSessionFiles()).toEqual([{ project: 'shop', name: 's1' }]);
+    store.removeStaleTemps();
+    expect(readdirSync(join(home, 'shop'))).toEqual(['s1.json']);
+  });
+
   it('refuses unsafe file names', () => {
     expect(() => store.readSession({ project: '..', name: 'x' })).toThrow(/Unsafe/);
     expect(store.locateSession('../etc')).toBeNull();

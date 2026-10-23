@@ -43,6 +43,7 @@ export async function tryListen(options: HubOptions): Promise<ListenResult> {
   }
 
   port = (server.address() as AddressInfo).port;
+  store.removeStaleTemps();
   sessions.start();
   log.info(`hub listening on http://${HOST}:${port}, store ${options.home}`);
   return {
@@ -60,7 +61,8 @@ export async function tryListen(options: HubOptions): Promise<ListenResult> {
   };
 }
 
-export async function isPointout(port: number): Promise<boolean> {
+/** True when whoever holds the port answers `/health` like a Pointout hub. */
+async function isPointout(port: number): Promise<boolean> {
   try {
     const res = await fetch(`http://${HOST}:${port}/health`, {
       signal: AbortSignal.timeout(1_000),

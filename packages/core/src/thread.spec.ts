@@ -99,4 +99,15 @@ describe('Thread', () => {
     key(root.activeElement!, { key: 'Tab', shiftKey: true });
     expect(root.activeElement).toBe(button('Close'));
   });
+
+  it('gives focus back to the badge it was opened from', () => {
+    const badge = document.createElement('div');
+    badge.tabIndex = 0;
+    root.append(badge);
+    badge.focus();
+
+    thread.open(base, anchor);
+    key(panel(), { key: 'Escape' });
+    expect(root.activeElement).toBe(badge);
+  });
 });

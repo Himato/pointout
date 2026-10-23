@@ -4,6 +4,7 @@ import {
   readdirSync,
   readFileSync,
   renameSync,
+  rmSync,
   writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
@@ -94,9 +95,18 @@ export function createStore(home: string) {
   }
 
   /** The file of a session id, in whatever project it was registered. */
-  function locateSession(id: string): FileRef | null {
+  function locateSession(id: string, refs = listSessionFiles()): FileRef | null {
     if (!isSafeName(id) || id === UNASSIGNED) return null;
-    return listSessionFiles().find((ref) => ref.name === id) ?? null;
+    return refs.find((ref) => ref.name === id) ?? null;
+  }
+
+  /** Temp files left by a hub killed mid write. Only the port holder writes, so all are stale. */
+  function removeStaleTemps(): void {
+    for (const project of dirs(home)) {
+      for (const name of files(join(home, project))) {
+        if (name.endsWith('.tmp')) rmSync(join(home, project, name), { force: true });
+      }
+    }
   }
 
   function allComments(): Located[] {
@@ -137,11 +147,12 @@ export function createStore(home: string) {
    */
   function upsertComments(comments: HubComment[], fallbackProject = UNASSIGNED): HubComment[] {
     const where = new Map(allComments().map((l) => [l.comment.id, l.file]));
+    const refs = listSessionFiles();
     const saved: HubComment[] = [];
     edit((open, touch) => {
       for (const comment of comments) {
         const from = where.get(comment.id);
-        const to = (comment.sessionId && locateSession(comment.sessionId)) || {
+        const to = (comment.sessionId && locateSession(comment.sessionId, refs)) || {
           project: from?.project ?? fallbackProject,
           name: UNASSIGNED,
         };
@@ -197,6 +208,7 @@ export function createStore(home: string) {
     writeSession,
     listSessionFiles,
     locateSession,
+    removeStaleTemps,
     findComment,
     commentsForApp,
     upsertComments,

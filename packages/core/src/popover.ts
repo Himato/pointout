@@ -1,5 +1,5 @@
 import { h, placeNear, type Anchor } from './dom';
-import { trapTab } from './focus-trap';
+import { deepActiveElement, trapTab } from './focus-trap';
 
 export interface PopoverRequest {
   anchor: Anchor;
@@ -45,8 +45,7 @@ export class Popover {
 
   open(request: PopoverRequest): void {
     this.request = request;
-    this.returnFocus =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    this.returnFocus = deepActiveElement();
     this.title.textContent = request.title;
     this.title.title = request.title;
     this.input.value = '';

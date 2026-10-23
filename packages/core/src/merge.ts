@@ -9,6 +9,7 @@ export interface MergeResult {
   flash: string | null;
 }
 
+/** A random comment id. */
 export function newId(): string {
   try {
     return crypto.randomUUID();

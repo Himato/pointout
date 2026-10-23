@@ -1,7 +1,7 @@
 import type { HubRecord } from './merge';
 import type { PointoutComment, SyncSession, SyncState } from './types';
 
-export const DEFAULT_HUB = 'http://127.0.0.1:7331';
+const DEFAULT_HUB = 'http://127.0.0.1:7331';
 const POLL_MS = 3_000;
 const RETRY_MS = 30_000;
 const PUSH_DEBOUNCE_MS = 300;

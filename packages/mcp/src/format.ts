@@ -1,6 +1,6 @@
 import {
+  commentLabel,
   defaultFormatter,
-  ownerLabel,
   type PointoutBundle,
   type PointoutComment,
 } from '@pointout/core/format';
@@ -25,19 +25,13 @@ export function brief(comments: HubComment[], fallbackName: string, now = new Da
   return defaultFormatter(bundle);
 }
 
-/** `Component (file) › selector`, the way the brief names an element. */
-export function label(comment: PointoutComment): string {
-  const file = comment.owner?.file ? ` (${comment.owner.file})` : '';
-  return `${ownerLabel(comment.owner, comment.domOwner)}${file} › ${comment.selector}`;
-}
-
 /** What Claude needs to act on a comment, without the screenshot and geometry. */
 export function compact(comment: PointoutComment) {
   return {
     id: comment.id,
     n: comment.n,
     status: comment.status ?? 'open',
-    label: label(comment),
+    label: commentLabel(comment),
     url: comment.url,
     text: comment.text,
     comment: comment.comment,

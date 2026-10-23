@@ -27,6 +27,7 @@ function tool<A>(run: (args: A) => Promise<CallToolResult>) {
   };
 }
 
+/** The six tools and the `triage` prompt, all talking to the hub through `client`. */
 export function createMcpServer(client: HubClient, session: Session): McpServer {
   const server = new McpServer({ name: 'pointout', version: VERSION });
 

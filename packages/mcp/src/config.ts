@@ -10,7 +10,7 @@ export interface Config {
   log: LogLevel;
 }
 
-export const DEFAULT_PORT = 7331;
+const DEFAULT_PORT = 7331;
 
 /** Folder safe: lowercase, `[a-z0-9._-]` only, never empty, never a dot path. */
 export function projectName(raw: string): string {
@@ -21,6 +21,7 @@ export function projectName(raw: string): string {
   return name || 'default';
 }
 
+/** Port, home, project and log level from the environment, with defaults. */
 export function readConfig(env: NodeJS.ProcessEnv = process.env, cwd = process.cwd()): Config {
   const port = Number(env.POINTOUT_PORT);
   const log = env.POINTOUT_LOG;

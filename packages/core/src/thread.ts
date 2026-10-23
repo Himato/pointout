@@ -1,5 +1,5 @@
 import { h, placeNear, type Anchor } from './dom';
-import { trapTab } from './focus-trap';
+import { deepActiveElement, trapTab } from './focus-trap';
 import { ownerLabel } from './format';
 import type { PointoutComment, PointoutReply } from './types';
 
@@ -52,10 +52,7 @@ export class Thread {
   }
 
   open(comment: PointoutComment, anchor: Anchor): void {
-    if (!this.comment) {
-      this.returnFocus =
-        document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    }
+    if (!this.comment) this.returnFocus = deepActiveElement();
     this.render(comment);
     this.panel.hidden = false;
     placeNear(this.panel, anchor);

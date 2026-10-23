@@ -11,7 +11,7 @@ export interface SessionInfo {
 
 export type Session = ReturnType<typeof createSession>;
 
-export function newSessionId(): string {
+function newSessionId(): string {
   return Math.random().toString(36).slice(2, 8).padEnd(6, '0');
 }
 
