@@ -1,0 +1,20 @@
+name: Feature
+description: An idea worth building.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What annoys you today.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: How you would fix it. Rough is fine.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else

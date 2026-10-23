@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+env:
+  REGISTRY_URL: ${{ vars.NPM_REGISTRY_URL || 'https://npm.pkg.github.com' }}
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Point npm at the registry
+        run: |
+          host="${REGISTRY_URL#*://}"
+          host="${host%/}"
+          echo "@pointout:registry=${REGISTRY_URL}" >> .npmrc
+          echo "//${host}/:_authToken=\${NODE_AUTH_TOKEN}" >> .npmrc
+      - run: pnpm build
+      - name: Publish
+        run: |
+          flags="--access public --no-git-checks"
+          # npm provenance only works against the public npm registry
+          case "$REGISTRY_URL" in
+            *registry.npmjs.org*) flags="$flags --provenance" ;;
+          esac
+          pnpm -r publish $flags

@@ -1,0 +1,6 @@
+dist
+coverage
+.angular
+.idea
+pnpm-lock.yaml
+CHANGELOG.md
