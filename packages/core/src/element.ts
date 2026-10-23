@@ -276,6 +276,7 @@ export class PointoutElement extends HTMLElement {
   }
 
   private setStatus(id: string, status: 'open' | 'resolved'): void {
+    this.sync?.touchStatus(id);
     this.comments = this.comments.map((c) => (c.id === id ? { ...c, status } : c));
     this.persist();
   }

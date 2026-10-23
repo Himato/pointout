@@ -118,6 +118,45 @@ describe('createSync', () => {
     expect(lastPutBody().deleted).toBeUndefined();
   });
 
+  it('sends status only for comments the user resolved or reopened, until a push succeeds', async () => {
+    local = [comment('c1', { status: 'resolved' }), comment('c2', { status: 'resolved' })];
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments.map((c) => c.status)).toEqual([undefined, undefined]);
+
+    sync.touchStatus('c2');
+    hub.down = true;
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments.map((c) => c.status)).toEqual([undefined, 'resolved']);
+
+    hub.down = false;
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments.map((c) => c.status)).toEqual([undefined, 'resolved']);
+
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments.map((c) => c.status)).toEqual([undefined, undefined]);
+  });
+
+  it('keeps a status click made while a push is in flight', async () => {
+    let answer: (value: unknown) => void = () => {};
+    fetch.mockImplementationOnce(() => new Promise((resolve) => (answer = resolve)));
+    local = [comment('c1', { status: 'resolved' })];
+    sync.touchStatus('c1');
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+
+    local = [comment('c1', { status: 'open' })];
+    sync.touchStatus('c1');
+    answer({ ok: true, json: () => Promise.resolve({ sessions: [], comments: [] }) });
+    await flush();
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().comments[0]!.status).toBe('open');
+  });
+
   it('polls GET /state with the app name encoded', async () => {
     sync.start();
     await flush();

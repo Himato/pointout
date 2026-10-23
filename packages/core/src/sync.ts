@@ -23,6 +23,8 @@ export interface Sync {
   push(): void;
   /** Ids removed locally. They go out as `deleted` with the next push. */
   forget(ids: string[]): void;
+  /** The user resolved or reopened this one. Only such ids carry `status`, so Claude's stays. */
+  touchStatus(id: string): void;
   setSession(id: string): void;
   readonly target: SyncSession | null;
   readonly sessions: SyncSession[];
@@ -49,6 +51,9 @@ export function createSync(deps: SyncDeps): Sync {
   let stateKey = '';
   let known = new Set<string>();
   const deleted = new Set<string>();
+  // Id to edit count, so a click made while a push is in flight still goes out next time.
+  const touched = new Map<string, number>();
+  let edits = 0;
 
   let running = false;
   let pollTimer: ReturnType<typeof setTimeout> | undefined;
@@ -149,8 +154,10 @@ export function createSync(deps: SyncDeps): Sync {
       const out = { ...comment };
       if (!out.sessionId && target) out.sessionId = target.id;
       if (known.has(out.id)) delete out.screenshotDataUrl;
+      if (!touched.has(out.id)) delete out.status;
       return out;
     });
+    const sentTouches = [...touched];
     const gone = [...deleted];
     const payload = gone.length
       ? { app: deps.app, comments, deleted: gone }
@@ -164,6 +171,7 @@ export function createSync(deps: SyncDeps): Sync {
     pushing--;
     if (body) {
       for (const id of gone) deleted.delete(id);
+      for (const [id, edit] of sentTouches) if (touched.get(id) === edit) touched.delete(id);
       apply(body);
     } else behind = true;
   }
@@ -189,6 +197,9 @@ export function createSync(deps: SyncDeps): Sync {
     push,
     forget(ids) {
       for (const id of ids) deleted.add(id);
+    },
+    touchStatus(id) {
+      touched.set(id, ++edits);
     },
     setSession(id) {
       const hadTarget = target !== null;

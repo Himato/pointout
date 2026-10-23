@@ -19,9 +19,10 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Adapters lint and typecheck against core's built types, so build first.
+      - run: pnpm build
       - run: pnpm lint
       - run: pnpm format:check
-      - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm check:bundle

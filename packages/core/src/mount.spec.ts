@@ -203,5 +203,18 @@ describe('mountPointout', () => {
     });
     expect(handle.getComments()[0]).toMatchObject({ sessionId: 's1', replies });
     expect(ui().querySelector('.toast')!.textContent).toBe('Resolved by Claude');
+
+    // Reopening from the thread is the one push that carries a status.
+    const puts = () =>
+      fetch.mock.calls
+        .map((call) => (call as unknown[])[1] as RequestInit | undefined)
+        .filter((init) => init?.method === 'PUT')
+        .map((init) => JSON.parse(init!.body as string) as { comments: { status?: string }[] });
+    expect(puts().every((body) => body.comments[0]!.status === undefined)).toBe(true);
+    ui().querySelector<HTMLElement>('.badge')!.click();
+    const reopen = ui().querySelector<HTMLButtonElement>('.thread .btn.primary')!;
+    expect(reopen.textContent).toBe('Reopen');
+    reopen.click();
+    await vi.waitFor(() => expect(puts().at(-1)!.comments[0]!.status).toBe('open'));
   });
 });

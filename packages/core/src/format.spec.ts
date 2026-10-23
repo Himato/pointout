@@ -80,6 +80,19 @@ describe('defaultFormatter', () => {
     expect(JSON.parse(match?.[1] ?? '')).toEqual(bundle);
   });
 
+  it('leaves screenshots out of the JSON block', () => {
+    const [first, second] = bundle.comments;
+    const shot = 'data:image/png;base64,AAAA';
+    const text = defaultFormatter({
+      ...bundle,
+      comments: [{ ...first!, screenshotDataUrl: shot }, second!],
+    });
+    expect(text).not.toContain(shot);
+    expect(text).not.toContain('screenshotDataUrl');
+    const json = /```json\n([\s\S]*)\n```$/.exec(text)?.[1] ?? '';
+    expect(JSON.parse(json)).toEqual(bundle);
+  });
+
   it('falls back to the boundary name when there is no heading', () => {
     const [, second] = bundle.comments;
     const noHeading = { ...second!, domOwner: { ...second!.domOwner, heading: undefined } };

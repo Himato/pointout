@@ -105,13 +105,14 @@ Usually the owner's host, or a shadow host. Badges use it to find the element af
 
 The rest of a comment, in short:
 
-| Field       | What it is                                                     |
-| ----------- | -------------------------------------------------------------- |
-| `id`        | Random and stable. Old stored comments get one on load.        |
-| `n`         | The number on the badge.                                       |
-| `sessionId` | The Claude session it was sent to, once synced.                |
-| `status`    | `'open'` or `'resolved'`. Missing means open. Claude owns it.  |
-| `replies`   | `{ from: 'claude' \| 'user', text, at }[]`. Claude owns these. |
+| Field               | What it is                                                                       |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `id`                | Random and stable. Old stored comments get one on load.                          |
+| `n`                 | The number on the badge.                                                         |
+| `sessionId`         | The Claude session it was sent to, once synced.                                  |
+| `status`            | `'open'` or `'resolved'`. Missing means open. Claude sets it, so do your clicks. |
+| `replies`           | `{ from: 'claude' \| 'user', text, at }[]`. Claude owns these.                   |
+| `screenshotDataUrl` | From your `screenshot` option. In the .json download, never in the brief.        |
 
 Selectors prefer `#id`, then `[data-testid]`, then tag, stable classes and `:nth-of-type`.
 Generated junk like `ng-star-inserted` or `css-1x9fa2k` is skipped.

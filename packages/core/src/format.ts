@@ -10,7 +10,10 @@ export function ownerLabel(owner: PointoutComment['owner'], domOwner: DomOwnerIn
   return `<${domOwner.tag} "${domOwner.heading ?? domOwner.name}">`;
 }
 
-/** A short brief per open comment, the closing note, then the whole bundle as fenced JSON. */
+/**
+ * A short brief per open comment, the closing note, then the whole bundle as fenced JSON.
+ * Screenshots stay out: a data URL is noise in a text brief. The .json download keeps them.
+ */
 export const defaultFormatter: ExportFormatter = (bundle) => {
   const { appName, createdAt, viewport, comments } = bundle;
   const open = comments.filter((c) => c.status !== 'resolved');
@@ -36,7 +39,13 @@ export const defaultFormatter: ExportFormatter = (bundle) => {
     CLOSING_NOTE,
     '',
     '```json',
-    JSON.stringify(bundle, null, 2),
+    JSON.stringify({ ...bundle, comments: comments.map(withoutScreenshot) }, null, 2),
     '```',
   ].join('\n');
 };
+
+function withoutScreenshot(comment: PointoutComment): PointoutComment {
+  const copy = { ...comment };
+  delete copy.screenshotDataUrl;
+  return copy;
+}
