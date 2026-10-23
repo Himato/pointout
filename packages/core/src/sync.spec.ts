@@ -51,6 +51,7 @@ const lastPutBody = () =>
   JSON.parse((puts().at(-1)![1] as RequestInit).body as string) as {
     app: string;
     comments: PointoutComment[];
+    deleted?: string[];
   };
 const flush = () => vi.advanceTimersByTimeAsync(0);
 
@@ -92,6 +93,29 @@ describe('createSync', () => {
     expect(init.headers).toEqual({ 'content-type': 'application/json' });
     expect(init.signal).toBeInstanceOf(AbortSignal);
     expect(lastPutBody()).toEqual({ app: 'Shop & co', comments: [comment('c1')] });
+  });
+
+  it('sends forgotten ids as deleted until a push succeeds', async () => {
+    local = [comment('c2')];
+    sync.forget(['c1']);
+    hub.down = true;
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().deleted).toEqual(['c1']);
+
+    hub.down = false;
+    sync.forget(['c3']);
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody()).toEqual({
+      app: 'Shop & co',
+      comments: [comment('c2')],
+      deleted: ['c1', 'c3'],
+    });
+
+    sync.push();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(lastPutBody().deleted).toBeUndefined();
   });
 
   it('polls GET /state with the app name encoded', async () => {

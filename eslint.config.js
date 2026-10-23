@@ -39,5 +39,22 @@ export default defineConfig(
     files: ['scripts/**/*.mjs'],
     languageOptions: { globals: { console: 'readonly', process: 'readonly', URL: 'readonly' } },
   },
+  {
+    files: ['packages/mcp/**/*.ts'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        AbortSignal: 'readonly',
+        fetch: 'readonly',
+        Buffer: 'readonly',
+      },
+    },
+  },
   prettier,
 );

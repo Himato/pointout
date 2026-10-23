@@ -1,0 +1,53 @@
+{
+  "name": "@pointout/mcp",
+  "version": "0.0.0",
+  "description": "Local hub and MCP server that hands Pointout comments to Claude Code and brings the replies back.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pointout/pointout.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/pointout/pointout/tree/main/packages/mcp#readme",
+  "bugs": "https://github.com/pointout/pointout/issues",
+  "keywords": [
+    "pointout",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "claude-code",
+    "feedback",
+    "devtools",
+    "ai"
+  ],
+  "bin": {
+    "pointout-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@pointout/core": "workspace:^",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsup": "^9.0.0",
+    "vitest": "^5.0.5"
+  }
+}

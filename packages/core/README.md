@@ -133,6 +133,7 @@ Nothing is fetched without this option.
 - Several Claude sessions live? The menu asks which one gets your comments.
 - Badges are clickable. One opens the thread: your comment, Claude's replies, Resolve, Reopen, Delete.
 - Resolved badges turn into a green check.
+- Delete and Clear remove comments from the hub too. Another tab of the same app never wipes yours.
 
 Hub offline? Pointout keeps working, retries quietly, and Copy for Claude is still right there.
 The hub itself ships as [`@pointout/mcp`](../mcp).

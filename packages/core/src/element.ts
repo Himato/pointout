@@ -137,6 +137,7 @@ export class PointoutElement extends HTMLElement {
   }
 
   clear(): void {
+    this.sync?.forget(this.comments.map((c) => c.id));
     this.comments = [];
     this.liveTargets.clear();
     this.store.clear();
@@ -283,6 +284,7 @@ export class PointoutElement extends HTMLElement {
     const gone = this.comments.find((c) => c.id === id);
     if (gone) this.liveTargets.delete(gone.n);
     this.comments = this.comments.filter((c) => c.id !== id);
+    this.sync?.forget([id]);
     this.persist();
   }
 

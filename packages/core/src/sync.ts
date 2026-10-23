@@ -21,6 +21,8 @@ export interface Sync {
   start(): void;
   stop(): void;
   push(): void;
+  /** Ids removed locally. They go out as `deleted` with the next push. */
+  forget(ids: string[]): void;
   setSession(id: string): void;
   readonly target: SyncSession | null;
   readonly sessions: SyncSession[];
@@ -46,6 +48,7 @@ export function createSync(deps: SyncDeps): Sync {
   let picked: string | null = null;
   let stateKey = '';
   let known = new Set<string>();
+  const deleted = new Set<string>();
 
   let running = false;
   let pollTimer: ReturnType<typeof setTimeout> | undefined;
@@ -148,15 +151,21 @@ export function createSync(deps: SyncDeps): Sync {
       if (known.has(out.id)) delete out.screenshotDataUrl;
       return out;
     });
+    const gone = [...deleted];
+    const payload = gone.length
+      ? { app: deps.app, comments, deleted: gone }
+      : { app: deps.app, comments };
     pushing++;
     const body = await request('/comments', {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ app: deps.app, comments }),
+      body: JSON.stringify(payload),
     });
     pushing--;
-    if (body) apply(body);
-    else behind = true;
+    if (body) {
+      for (const id of gone) deleted.delete(id);
+      apply(body);
+    } else behind = true;
   }
 
   function push(): void {
@@ -178,6 +187,9 @@ export function createSync(deps: SyncDeps): Sync {
       if (pushTimer !== undefined) void send();
     },
     push,
+    forget(ids) {
+      for (const id of ids) deleted.add(id);
+    },
     setSession(id) {
       const hadTarget = target !== null;
       picked = id;
