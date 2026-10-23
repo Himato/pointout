@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-Dev builds get Pointout. Production builds get nothing, not even the lazy chunk.
+Dev builds get Pointout. Production builds get nothing, not even an unused lazy chunk.
 If you use the router, comment URLs come from `router.url`.
 
 ## Setup for any Angular version
@@ -76,10 +76,13 @@ The resolver never throws. When it is not sure, it says `null` and the core stil
 Want it on a staging build where `ngDevMode` is false?
 
 ```ts
-import { providePointoutAlways } from '@pointout/angular/providers';
+import { providePointoutAlways } from '@pointout/angular/always';
 
 providers: [providePointoutAlways({ appName: 'My app (staging)' })];
 ```
+
+It has its own import on purpose.
+Bundlers emit a chunk for every `import()` they see in a file, so sharing one with `providePointout` would ship Pointout to prod.
 
 Your call. Just keep it away from real users.
 

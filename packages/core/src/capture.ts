@@ -1,4 +1,4 @@
-import { collapseText } from './dom';
+import { collapseText, visibleText } from './dom';
 import { resolveDomOwner } from './dom-owner';
 import { buildAnchor, buildSelector } from './selector';
 import type { OwnerInfo, OwnerResolver, PointoutComment } from './types';
@@ -53,7 +53,7 @@ export function captureElement(el: Element, owner: OwnerInfo | null, url: string
     selector: buildSelector(el, owner?.scope),
     ...(anchor && { anchor }),
     tag: el.localName,
-    text: collapseText(el.textContent),
+    text: collapseText(visibleText(el)),
     bbox: {
       x: Math.round(rect.left + window.scrollX),
       y: Math.round(rect.top + window.scrollY),

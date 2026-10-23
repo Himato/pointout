@@ -34,12 +34,19 @@
     "./providers": {
       "types": "./dist/providers.d.ts",
       "import": "./dist/providers.js"
+    },
+    "./always": {
+      "types": "./dist/always.d.ts",
+      "import": "./dist/always.js"
     }
   },
   "typesVersions": {
     "*": {
       "providers": [
         "./dist/providers.d.ts"
+      ],
+      "always": [
+        "./dist/always.d.ts"
       ]
     }
   },

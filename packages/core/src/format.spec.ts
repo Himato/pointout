@@ -92,4 +92,11 @@ describe('defaultFormatter', () => {
     const text = defaultFormatter({ ...bundle, comments: [withFile] });
     expect(text).toContain(`1. [AlertsTableComponent (${file}) › #alerts-tbl] on /alerts`);
   });
+
+  it('leaves out the quote when the element has no text', () => {
+    const [first] = bundle.comments;
+    const text = defaultFormatter({ ...bundle, comments: [{ ...first!, text: '' }] });
+    expect(text).toContain('1. [AlertsTableComponent › #alerts-tbl] on /alerts\n');
+    expect(text).not.toContain('— ""');
+  });
 });

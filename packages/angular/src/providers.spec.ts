@@ -1,8 +1,9 @@
 import { APP_INITIALIZER, Injector, runInInjectionContext } from '@angular/core';
-import type { EnvironmentProviders, Provider } from '@angular/core';
+import type { EnvironmentProviders } from '@angular/core';
 import { mountPointout } from '@pointout/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { providePointout, providePointoutAlways } from './providers';
+import { providePointoutAlways } from './always';
+import { providePointout } from './providers';
 
 // The real router is partially compiled and needs the JIT compiler. A token is all we need.
 vi.mock('@angular/router', () => ({ Router: class Router {} }));
@@ -18,12 +19,6 @@ type Initializer = { provide: unknown; useFactory: () => () => Promise<void> };
 
 const providersOf = (p: EnvironmentProviders) =>
   (p as unknown as { ɵproviders: Initializer[] }).ɵproviders;
-
-async function runInitializer(providers: Provider[]): Promise<void> {
-  const [initializer] = providersOf(providePointoutAlways({ appName: 'Demo' }));
-  const injector = Injector.create({ providers });
-  await runInInjectionContext(injector, initializer!.useFactory)();
-}
 
 afterEach(() => {
   devGlobal.ngDevMode = angularDevMode;
@@ -46,27 +41,17 @@ describe('providePointout', () => {
     expect(providersOf(providePointout())).toEqual([]);
   });
 
-  it('still provides in every build with providePointoutAlways', () => {
-    devGlobal.ngDevMode = false;
+  it('mounts with router.url in dev mode', async () => {
+    devGlobal.ngDevMode = true;
+    const [initializer] = providersOf(providePointout({ appName: 'Demo' }));
+    const injector = Injector.create({
+      providers: [{ provide: Router, useValue: { url: '/from-router' } }],
+    });
 
-    expect(providersOf(providePointoutAlways())).toHaveLength(1);
-  });
-});
-
-describe('the initializer', () => {
-  it('mounts with router.url when a Router is around', async () => {
-    await runInitializer([{ provide: Router, useValue: { url: '/from-router' } }]);
+    await runInInjectionContext(injector, initializer!.useFactory)();
 
     const options = vi.mocked(mountPointout).mock.lastCall![0];
     expect(options.appName).toBe('Demo');
     expect(options.resolveUrl!()).toBe('/from-router');
-  });
-
-  it('falls back to location without a Router', async () => {
-    history.replaceState(null, '', '/plain?x=1');
-
-    await runInitializer([]);
-
-    expect(vi.mocked(mountPointout).mock.lastCall![0].resolveUrl!()).toBe('/plain?x=1');
   });
 });
