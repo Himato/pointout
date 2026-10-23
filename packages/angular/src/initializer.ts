@@ -24,7 +24,7 @@ export function pointoutInitializer(
           const { mountPointoutForAngular } = await load();
           mountPointoutForAngular({
             ...options,
-            resolveUrl: router ? () => router.url : options.resolveUrl,
+            resolveUrl: options.resolveUrl ?? (router ? () => router.url : undefined),
           });
         };
       },

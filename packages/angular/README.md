@@ -25,6 +25,7 @@ export const appConfig: ApplicationConfig = {
 
 Dev builds get Pointout. Production builds get nothing, not even an unused lazy chunk.
 If you use the router, comment URLs come from `router.url`.
+A `resolveUrl` you pass wins over it.
 
 ## Setup for any Angular version
 

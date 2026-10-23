@@ -47,6 +47,16 @@ describe('the initializer', () => {
     expect(options.resolveUrl!()).toBe('/from-router');
   });
 
+  it('lets a caller resolveUrl win over the Router', async () => {
+    const [initializer] = providersOf(providePointoutAlways({ resolveUrl: () => '/custom' }));
+    const injector = Injector.create({
+      providers: [{ provide: Router, useValue: { url: '/from-router' } }],
+    });
+    await runInInjectionContext(injector, initializer!.useFactory)();
+
+    expect(vi.mocked(mountPointout).mock.lastCall![0].resolveUrl!()).toBe('/custom');
+  });
+
   it('leaves the url to the core without a Router', async () => {
     await runInitializer([]);
 
