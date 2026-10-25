@@ -1,6 +1,6 @@
 {
   "name": "@point-out/angular",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Angular enricher for Pointout. Names the component behind every element you click.",
   "type": "module",
   "sideEffects": false,

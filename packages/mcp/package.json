@@ -1,6 +1,6 @@
 {
   "name": "@point-out/mcp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Local hub and MCP server that hands Pointout comments to Claude Code and brings the replies back.",
   "type": "module",
   "license": "MIT",
