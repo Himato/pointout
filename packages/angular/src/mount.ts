@@ -1,4 +1,4 @@
-import { mountPointout, type PointoutHandle, type PointoutOptions } from '@pointout/core';
+import { mountPointout, type PointoutHandle, type PointoutOptions } from '@point-out/core';
 import { angularOwnerResolver } from './resolver';
 
 /** `PointoutOptions` without `resolveOwner`, and `appName` falls back to `document.title`. */

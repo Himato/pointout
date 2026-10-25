@@ -1,9 +1,9 @@
-import { mountPointout } from '@pointout/core';
+import { mountPointout } from '@point-out/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mountPointoutForAngular } from './mount';
 import { angularOwnerResolver } from './resolver';
 
-vi.mock('@pointout/core', () => ({ mountPointout: vi.fn(() => ({ unmount: vi.fn() })) }));
+vi.mock('@point-out/core', () => ({ mountPointout: vi.fn(() => ({ unmount: vi.fn() })) }));
 
 const mounted = vi.mocked(mountPointout);
 const lastOptions = () => mounted.mock.lastCall![0];

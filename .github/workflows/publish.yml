@@ -9,10 +9,11 @@ permissions:
   packages: write
   id-token: write
 
-# GitHub Packages takes the workflow's own token. Any other registry needs the NPM_TOKEN secret.
+# Publishes to public npm with the NPM_TOKEN secret.
+# Set the NPM_REGISTRY_URL variable to https://npm.pkg.github.com for GitHub Packages. That uses the workflow's own token.
 env:
-  REGISTRY_URL: ${{ vars.NPM_REGISTRY_URL || 'https://npm.pkg.github.com' }}
-  NODE_AUTH_TOKEN: ${{ (vars.NPM_REGISTRY_URL && !contains(vars.NPM_REGISTRY_URL, 'npm.pkg.github.com')) && secrets.NPM_TOKEN || secrets.GITHUB_TOKEN }}
+  REGISTRY_URL: ${{ vars.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
+  NODE_AUTH_TOKEN: ${{ contains(vars.NPM_REGISTRY_URL || 'https://registry.npmjs.org', 'npm.pkg.github.com') && secrets.GITHUB_TOKEN || secrets.NPM_TOKEN }}
 
 jobs:
   publish:
@@ -29,7 +30,7 @@ jobs:
         run: |
           host="${REGISTRY_URL#*://}"
           host="${host%/}"
-          echo "@pointout:registry=${REGISTRY_URL}" >> .npmrc
+          echo "@point-out:registry=${REGISTRY_URL}" >> .npmrc
           echo "//${host}/:_authToken=\${NODE_AUTH_TOKEN}" >> .npmrc
       - run: pnpm build
       - name: Publish
@@ -37,6 +38,7 @@ jobs:
           flags="--access public --no-git-checks"
           # npm provenance only works against the public npm registry
           case "$REGISTRY_URL" in
+            # Provenance needs repository.url in each package.json to match this repo
             *registry.npmjs.org*) flags="$flags --provenance" ;;
           esac
           pnpm -r publish $flags

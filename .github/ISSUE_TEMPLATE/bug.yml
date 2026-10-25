@@ -20,7 +20,7 @@ body:
     id: versions
     attributes:
       label: Versions
-      placeholder: '@pointout/core 0.1.0, @pointout/angular 0.1.0, Angular 22, Chrome 140'
+      placeholder: '@point-out/core 0.1.0, @point-out/angular 0.1.0, Angular 22, Chrome 140'
     validations:
       required: true
   - type: textarea

@@ -18,8 +18,8 @@
     "@angular/forms": "^22.2.0",
     "@angular/platform-browser": "^22.2.0",
     "@angular/router": "^22.2.0",
-    "@pointout/angular": "workspace:^",
-    "@pointout/core": "workspace:^",
+    "@point-out/angular": "workspace:^",
+    "@point-out/core": "workspace:^",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

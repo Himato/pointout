@@ -1,10 +1,10 @@
 ---
-'@pointout/core': minor
-'@pointout/angular': minor
+'@point-out/core': minor
+'@point-out/angular': minor
 ---
 
 First release. Point at things, say what is wrong, paste it into Claude Code.
 
-`@pointout/core`: the whole UI as one web component. Zero deps, any framework.
+`@point-out/core`: the whole UI as one web component. Zero deps, any framework.
 
-`@pointout/angular`: names the component behind every click, from Angular 2 to 22.
+`@point-out/angular`: names the component behind every click, from Angular 2 to 22.

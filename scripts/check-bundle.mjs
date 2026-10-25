@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = join(root, 'apps/demo-angular/dist/demo-angular/browser');
-// Both strings only exist in @pointout/core: the custom element name and the storage key prefix.
+// Both strings only exist in @point-out/core: the custom element name and the storage key prefix.
 const markers = ['point-out', 'pointout:'];
 
 function build(script) {

@@ -1,4 +1,4 @@
-import type { PointoutReply } from '@pointout/core/format';
+import type { PointoutReply } from '@point-out/core/format';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { hubComment, tempHome } from '../testing';
 import { MAX_BODY } from './http';

@@ -10,6 +10,6 @@ export default defineConfig({
   minify: false,
   treeshake: true,
   splitting: true,
-  external: ['@pointout/core', '@angular/core', '@angular/router'],
+  external: ['@point-out/core', '@angular/core', '@angular/router'],
   tsconfig: 'tsconfig.build.json',
 });

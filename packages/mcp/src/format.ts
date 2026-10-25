@@ -3,7 +3,7 @@ import {
   defaultFormatter,
   type PointoutBundle,
   type PointoutComment,
-} from '@pointout/core/format';
+} from '@point-out/core/format';
 import type { HubComment } from './hub/store';
 
 /** Drops the hub's `app` so the comment reads exactly like the browser's own. */

@@ -14,7 +14,7 @@ No screenshots with red circles. No "the button, you know, the blue one".
 ## Install
 
 ```sh
-pnpm add -D @pointout/core @pointout/angular
+pnpm add -D @point-out/core @point-out/angular
 ```
 
 ## Angular in one line
@@ -22,7 +22,7 @@ pnpm add -D @pointout/core @pointout/angular
 In `app.config.ts`:
 
 ```ts
-import { providePointout } from '@pointout/angular/providers';
+import { providePointout } from '@point-out/angular/providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), providePointout({ appName: 'My app' })],
@@ -77,7 +77,7 @@ Copy and paste works. Skipping it is nicer.
 For every project on your machine:
 
 ```sh
-claude mcp add --scope user pointout -- npx -y @pointout/mcp
+claude mcp add --scope user pointout -- npx -y @point-out/mcp
 ```
 
 Or for one project, in `.mcp.json`:
@@ -85,7 +85,7 @@ Or for one project, in `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "pointout": { "command": "npx", "args": ["-y", "@pointout/mcp"] }
+    "pointout": { "command": "npx", "args": ["-y", "@point-out/mcp"] }
   }
 }
 ```
@@ -102,19 +102,19 @@ The prompt `/mcp__pointout__triage` walks Claude through every open comment.
 
 ## Packages
 
-| Package                                   | What it does                                                 |
-| ----------------------------------------- | ------------------------------------------------------------ |
-| [`@pointout/core`](packages/core)         | The whole UI. Plain web component, zero deps, any framework. |
-| [`@pointout/angular`](packages/angular)   | Names the Angular component behind every click. Angular 2+.  |
-| [`@pointout/mcp`](packages/mcp)           | Local hub and MCP server. Claude reads, replies, resolves.   |
-| `@pointout/react`, `@pointout/vue`, yours | React and Vue adapters welcome.                              |
+| Package                                     | What it does                                                 |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| [`@point-out/core`](packages/core)          | The whole UI. Plain web component, zero deps, any framework. |
+| [`@point-out/angular`](packages/angular)    | Names the Angular component behind every click. Angular 2+.  |
+| [`@point-out/mcp`](packages/mcp)            | Local hub and MCP server. Claude reads, replies, resolves.   |
+| `@point-out/react`, `@point-out/vue`, yours | React and Vue adapters welcome.                              |
 
 ## Write an adapter
 
 An adapter is one function. Give it an element, get back the component that owns it, or `null`.
 
 ```ts
-import { mountPointout, type OwnerResolver } from '@pointout/core';
+import { mountPointout, type OwnerResolver } from '@point-out/core';
 
 const myResolver: OwnerResolver = (el) => {
   const name = findComponentName(el); // your framework's dev hooks
@@ -130,7 +130,7 @@ Never throw, and say `null` when unsure.
 ## Develop
 
 ```sh
-git clone https://github.com/pointout/pointout.git
+git clone https://github.com/Himato/pointout.git
 cd pointout
 corepack enable
 pnpm install

@@ -1,5 +1,5 @@
 {
-  "name": "@pointout/core",
+  "name": "@point-out/core",
   "version": "0.0.0",
   "description": "Click things in your running app, say what is wrong, hand Claude Code a brief it can act on.",
   "type": "module",
@@ -7,11 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pointout/pointout.git",
+    "url": "git+https://github.com/Himato/pointout.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/pointout/pointout/tree/main/packages/core#readme",
-  "bugs": "https://github.com/pointout/pointout/issues",
+  "homepage": "https://github.com/Himato/pointout/tree/main/packages/core#readme",
+  "bugs": "https://github.com/Himato/pointout/issues",
   "keywords": [
     "pointout",
     "feedback",

@@ -3,7 +3,7 @@
   "baseBranch": "main",
   "access": "public",
   "format": "auto",
-  "changelog": ["@changesets/changelog-github", { "repo": "pointout/pointout" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "Himato/pointout" }],
   "commit": false,
   "ignore": ["demo-angular"],
   "fixed": [],

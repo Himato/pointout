@@ -1,4 +1,4 @@
-import type { OwnerInfo, OwnerResolver } from '@pointout/core';
+import type { OwnerInfo, OwnerResolver } from '@point-out/core';
 import { MAX_ENTRIES, isSignal, toJsonSafe } from './json-safe';
 import { getNg, type ComponentDef, type IvyDebugApi, type ViewEngineDebugApi } from './ng-globals';
 

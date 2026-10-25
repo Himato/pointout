@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { angularOwnerResolver } from '@pointout/angular';
+import { angularOwnerResolver } from '@point-out/angular';
 
 @Component({
   selector: 'app-card',

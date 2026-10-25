@@ -1,4 +1,4 @@
-# @pointout/mcp
+# @point-out/mcp
 
 Claude Code reads your Pointout comments straight from the running app.
 It replies, fixes, resolves, and the badges turn green while you watch.
@@ -8,7 +8,7 @@ It replies, fixes, resolves, and the badges turn green while you watch.
 Register it once for every project:
 
 ```sh
-claude mcp add --scope user pointout -- npx -y @pointout/mcp
+claude mcp add --scope user pointout -- npx -y @point-out/mcp
 ```
 
 Or for one project, in `.mcp.json`:
@@ -16,7 +16,7 @@ Or for one project, in `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "pointout": { "command": "npx", "args": ["-y", "@pointout/mcp"] }
+    "pointout": { "command": "npx", "args": ["-y", "@point-out/mcp"] }
   }
 }
 ```
@@ -58,7 +58,7 @@ Run `/mcp__pointout__triage` in Claude Code. It says:
 ## Run the hub alone
 
 ```sh
-npx @pointout/mcp serve
+npx @point-out/mcp serve
 ```
 
 Handy when no Claude chat is open yet, or when you want its logs in a terminal.

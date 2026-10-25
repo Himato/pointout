@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
-import type { PointoutComment } from '@pointout/core/format';
+import type { PointoutComment } from '@point-out/core/format';
 import { log } from '../log';
 
 export type HubComment = PointoutComment & { app: string };

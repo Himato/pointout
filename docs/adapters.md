@@ -51,7 +51,7 @@ React dev builds hang a fiber on each DOM node under a `__reactFiber$<random>` k
 Walk up the fiber tree, keep the function components, done.
 
 ```ts
-import { mountPointout, type OwnerResolver } from '@pointout/core';
+import { mountPointout, type OwnerResolver } from '@point-out/core';
 
 interface Fiber {
   type: unknown;
@@ -105,13 +105,13 @@ export const reactOwnerResolver: OwnerResolver = (el) => {
 mountPointout({ appName: 'My app', resolveOwner: reactOwnerResolver });
 ```
 
-Things a real `@pointout/react` would care about: `memo` and `forwardRef` wrappers,
+Things a real `@point-out/react` would care about: `memo` and `forwardRef` wrappers,
 components that render fragments, and a `resolveUrl` for your router.
 
 ## Wire it up
 
 ```ts
-import { mountPointout } from '@pointout/core';
+import { mountPointout } from '@point-out/core';
 
 mountPointout({ appName: 'My app', resolveOwner: myResolver });
 ```
@@ -127,5 +127,5 @@ Add one test that throws inside your lookup and expects `null`.
 ## Ship it
 
 Copy `packages/angular` as a starting point.
-tsup, Vitest, `sideEffects: false`, `@pointout/core` as a peer.
+tsup, Vitest, `sideEffects: false`, `@point-out/core` as a peer.
 Open a PR. We will be happy to see it.

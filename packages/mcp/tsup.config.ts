@@ -9,5 +9,5 @@ export default defineConfig({
   dts: false,
   sourcemap: true,
   clean: true,
-  external: ['@modelcontextprotocol/sdk', 'zod', '@pointout/core'],
+  external: ['@modelcontextprotocol/sdk', 'zod', '@point-out/core'],
 });

@@ -1,4 +1,4 @@
-# @pointout/angular
+# @point-out/angular
 
 Pointout, but it knows your components.
 Every element you click comes back with its component, parent chain, selector and inputs.
@@ -8,7 +8,7 @@ Works from Angular 2 to 22. No decorators, no compiler, no markup changes.
 ## Install
 
 ```sh
-pnpm add -D @pointout/core @pointout/angular
+pnpm add -D @point-out/core @point-out/angular
 ```
 
 ## Setup for modern apps (15+)
@@ -16,7 +16,7 @@ pnpm add -D @pointout/core @pointout/angular
 In `app.config.ts`:
 
 ```ts
-import { providePointout } from '@pointout/angular/providers';
+import { providePointout } from '@point-out/angular/providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), providePointout({ appName: 'My app' })],
@@ -35,7 +35,7 @@ In `main.ts`, after you bootstrap:
 declare const ngDevMode: boolean | undefined;
 
 if (typeof ngDevMode === 'undefined' || ngDevMode) {
-  import('@pointout/angular').then(({ mountPointoutForAngular }) =>
+  import('@point-out/angular').then(({ mountPointoutForAngular }) =>
     mountPointoutForAngular({ appName: 'My app' }),
   );
 }
@@ -45,7 +45,7 @@ Pre Ivy apps (Angular 8 and older) do not have `ngDevMode`. Use your environment
 
 ```ts
 if (!environment.production) {
-  import('@pointout/angular').then(({ mountPointoutForAngular }) =>
+  import('@point-out/angular').then(({ mountPointoutForAngular }) =>
     mountPointoutForAngular({ appName: 'My app' }),
   );
 }
@@ -53,7 +53,7 @@ if (!environment.production) {
 
 Honest note: that form still ships an unused lazy chunk in prod. It never loads, it just sits there.
 
-`appName` defaults to `document.title`. Every other `@pointout/core` option works too.
+`appName` defaults to `document.title`. Every other `@point-out/core` option works too.
 
 ## Use it
 
@@ -88,7 +88,7 @@ The core still writes a decent brief.
 Want it on a staging build where `ngDevMode` is false?
 
 ```ts
-import { providePointoutAlways } from '@pointout/angular/always';
+import { providePointoutAlways } from '@point-out/angular/always';
 
 export const appConfig: ApplicationConfig = {
   providers: [providePointoutAlways({ appName: 'My app (staging)' })],
@@ -111,8 +111,8 @@ Nothing needs to change.
 The resolver is exported on its own if you mount the core yourself:
 
 ```ts
-import { mountPointout } from '@pointout/core';
-import { angularOwnerResolver } from '@pointout/angular';
+import { mountPointout } from '@point-out/core';
+import { angularOwnerResolver } from '@point-out/angular';
 
 mountPointout({ appName: 'My app', resolveOwner: angularOwnerResolver });
 ```

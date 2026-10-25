@@ -1,4 +1,4 @@
-# @pointout/core
+# @point-out/core
 
 Click a thing in your running app. Say what is wrong with it.
 Copy a brief that Claude Code can act on without guessing.
@@ -8,7 +8,7 @@ Plain web component. Zero runtime dependencies. Works with any framework, or non
 ## Install
 
 ```sh
-pnpm add -D @pointout/core
+pnpm add -D @point-out/core
 ```
 
 ## Mount
@@ -17,7 +17,7 @@ Do it in dev only. Your users do not need this.
 
 ```ts
 if (import.meta.env.DEV) {
-  const { mountPointout } = await import('@pointout/core');
+  const { mountPointout } = await import('@point-out/core');
   mountPointout({ appName: 'My app' });
 }
 ```
@@ -139,14 +139,14 @@ Nothing is fetched without this option.
 - Delete and Clear remove comments from the hub too. Another tab of the same app never wipes yours.
 
 Hub offline? Pointout keeps working, retries quietly, and Copy for Claude is still right there.
-The hub itself ships as [`@pointout/mcp`](../mcp).
+The hub itself ships as [`@point-out/mcp`](../mcp).
 
 ## Node
 
-`@pointout/core/format` has the formatter and the types, and nothing that needs a DOM.
+`@point-out/core/format` has the formatter and the types, and nothing that needs a DOM.
 
 ```ts
-import { defaultFormatter } from '@pointout/core/format';
+import { defaultFormatter } from '@point-out/core/format';
 ```
 
 ## Write an adapter
@@ -155,13 +155,13 @@ An adapter is one function: `(el) => OwnerInfo | null`.
 Never throw, return `null` when unsure. The core guards you anyway.
 
 See [docs/adapters.md](../../docs/adapters.md) for the whole thing in about 30 lines.
-Angular already has one: [`@pointout/angular`](../angular).
+Angular already has one: [`@point-out/angular`](../angular).
 
 ## Hack on it
 
 ```sh
-pnpm --filter @pointout/core build
-pnpm --filter @pointout/core test
+pnpm --filter @point-out/core build
+pnpm --filter @point-out/core test
 npx serve packages/core
 ```
 

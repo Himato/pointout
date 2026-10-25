@@ -1,16 +1,16 @@
 {
-  "name": "@pointout/mcp",
+  "name": "@point-out/mcp",
   "version": "0.0.0",
   "description": "Local hub and MCP server that hands Pointout comments to Claude Code and brings the replies back.",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pointout/pointout.git",
+    "url": "git+https://github.com/Himato/pointout.git",
     "directory": "packages/mcp"
   },
-  "homepage": "https://github.com/pointout/pointout/tree/main/packages/mcp#readme",
-  "bugs": "https://github.com/pointout/pointout/issues",
+  "homepage": "https://github.com/Himato/pointout/tree/main/packages/mcp#readme",
+  "bugs": "https://github.com/Himato/pointout/issues",
   "keywords": [
     "pointout",
     "mcp",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
-    "@pointout/core": "workspace:^",
+    "@point-out/core": "workspace:^",
     "zod": "^4.6.7"
   },
   "devDependencies": {

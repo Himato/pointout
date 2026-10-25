@@ -1,5 +1,5 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
-import type { PointoutComment } from '@pointout/core/format';
+import type { PointoutComment } from '@point-out/core/format';
 import { VERSION } from '../version';
 import {
   HttpError,

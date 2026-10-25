@@ -1,4 +1,4 @@
-import type { PointoutComment, PointoutReply, SyncSession } from '@pointout/core/format';
+import type { PointoutComment, PointoutReply, SyncSession } from '@point-out/core/format';
 import type { LiveSession, Registration } from './hub/sessions';
 import { HOST, tryListen, type Hub } from './hub/start';
 import type { HubComment, SessionMeta } from './hub/store';

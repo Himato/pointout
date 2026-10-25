@@ -23,7 +23,7 @@ export function mountPointout(options: PointoutOptions): PointoutHandle {
 
   const element = document.createElement(TAG_NAME);
   if (!(element instanceof PointoutElement)) {
-    console.warn(`[pointout] <${TAG_NAME}> is already defined by another copy of @pointout/core.`);
+    console.warn(`[pointout] <${TAG_NAME}> is already defined by another copy of @point-out/core.`);
     return NOOP_HANDLE;
   }
   for (const previous of document.querySelectorAll(TAG_NAME)) previous.remove();

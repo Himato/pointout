@@ -1,13 +1,13 @@
 import { APP_INITIALIZER, Injector, runInInjectionContext } from '@angular/core';
 import type { EnvironmentProviders } from '@angular/core';
-import { mountPointout } from '@pointout/core';
+import { mountPointout } from '@point-out/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { providePointoutAlways } from './always';
 import { providePointout } from './providers';
 
 // The real router is partially compiled and needs the JIT compiler. A token is all we need.
 vi.mock('@angular/router', () => ({ Router: class Router {} }));
-vi.mock('@pointout/core', () => ({ mountPointout: vi.fn() }));
+vi.mock('@point-out/core', () => ({ mountPointout: vi.fn() }));
 
 const { Router } = await import('@angular/router');
 
