@@ -20,7 +20,8 @@
     "claude",
     "claude-code",
     "devtools",
-    "ai"
+    "ai",
+    "coding-agent"
   ],
   "files": [
     "dist",

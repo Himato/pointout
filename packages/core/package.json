@@ -1,7 +1,7 @@
 {
   "name": "@point-out/core",
   "version": "0.1.0",
-  "description": "Click things in your running app, say what is wrong, hand Claude Code a brief it can act on.",
+  "description": "Click things in your running app, say what is wrong, hand your coding agent (Claude Code, Codex, Cursor) a brief it can act on.",
   "type": "module",
   "sideEffects": false,
   "license": "MIT",
@@ -20,7 +20,11 @@
     "claude",
     "claude-code",
     "devtools",
-    "ai"
+    "ai",
+    "mcp",
+    "codex",
+    "cursor",
+    "coding-agent"
   ],
   "files": [
     "dist",
