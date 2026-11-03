@@ -96,6 +96,7 @@ export class PointoutElement extends HTMLElement {
   }
 
   connectedCallback(): void {
+    this.setAttribute('dir', 'ltr');
     window.addEventListener('keydown', this.onKeydown, true);
     window.addEventListener('pointerdown', this.onAnyPointerDown, true);
     this.render();

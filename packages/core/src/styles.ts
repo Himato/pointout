@@ -1,6 +1,9 @@
 export const styles = /* css */ `
 :host {
   all: initial;
+  /* all: initial skips direction, so an RTL page would mirror the UI. */
+  direction: ltr;
+  text-align: start;
   display: block;
   position: fixed;
   top: 0;
