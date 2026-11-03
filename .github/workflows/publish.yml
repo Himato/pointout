@@ -3,17 +3,18 @@ name: Publish
 on:
   push:
     tags: ['v*']
+  # Rerun a failed release from main without a new tag.
+  workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
   id-token: write
 
-# Publishes to public npm with the NPM_TOKEN secret.
+# Publishes to public npm with trusted publishing. No token, GitHub's OIDC proves who we are.
 # Set the NPM_REGISTRY_URL variable to https://npm.pkg.github.com for GitHub Packages. That uses the workflow's own token.
 env:
   REGISTRY_URL: ${{ vars.NPM_REGISTRY_URL || 'https://registry.npmjs.org' }}
-  NODE_AUTH_TOKEN: ${{ contains(vars.NPM_REGISTRY_URL || 'https://registry.npmjs.org', 'npm.pkg.github.com') && secrets.GITHUB_TOKEN || secrets.NPM_TOKEN }}
 
 jobs:
   publish:
@@ -25,20 +26,61 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      # Trusted publishing needs npm 11.5.1 or newer. Node 22 ships 10.x.
+      - name: Update npm
+        run: |
+          npm install -g npm@latest
+          echo "npm $(npm -v)"
+          echo "pnpm $(pnpm -v)"
       - run: pnpm install --frozen-lockfile
       - name: Point npm at the registry
+        env:
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          host="${REGISTRY_URL#*://}"
-          host="${host%/}"
           echo "@point-out:registry=${REGISTRY_URL}" >> .npmrc
-          echo "//${host}/:_authToken=\${NODE_AUTH_TOKEN}" >> .npmrc
+          # Only GitHub Packages gets a token. npm uses OIDC.
+          case "$REGISTRY_URL" in
+            *npm.pkg.github.com*)
+              host="${REGISTRY_URL#*://}"
+              host="${host%/}"
+              echo "//${host}/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc
+              ;;
+          esac
       - run: pnpm build
       - name: Publish
         run: |
           flags="--access public --no-git-checks"
-          # npm provenance only works against the public npm registry
           case "$REGISTRY_URL" in
             # Provenance needs repository.url in each package.json to match this repo
             *registry.npmjs.org*) flags="$flags --provenance" ;;
           esac
-          pnpm -r publish $flags
+          set -o pipefail
+          status=0
+          pnpm -r publish $flags 2>&1 | tee publish.log || status=$?
+          # pnpm can fall back to publishing without the trusted token. Treat that as a failure.
+          if grep -q "Skipped OIDC" publish.log; then
+            echo "::error::Trusted publishing was skipped. Check the trusted publisher settings on npmjs.com."
+            exit 1
+          fi
+          exit $status
+      - name: Check the packages are on npm
+        if: contains(env.REGISTRY_URL, 'registry.npmjs.org')
+        run: |
+          missing=0
+          for pkg in packages/*/package.json; do
+            name=$(node -p "require('./$pkg').name")
+            version=$(node -p "require('./$pkg').version")
+            url="https://registry.npmjs.org/${name/\//%2f}/${version}"
+            found=no
+            # The registry can lag a little. Try every 10 s for 2 minutes.
+            for _ in $(seq 12); do
+              if [ "$(curl -s -o /dev/null -w '%{http_code}' "$url")" = "200" ]; then
+                found=yes
+                break
+              fi
+              sleep 10
+            done
+            echo "${name}@${version}: ${found}"
+            [ "$found" = yes ] || missing=1
+          done
+          exit $missing
