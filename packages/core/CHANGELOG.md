@@ -1,5 +1,13 @@
 # @point-out/core
 
+## 0.1.1
+
+### Patch Changes
+
+- df3a2bb: README shows the loop as a GIF.
+- 4929f69: Pointout keeps its own UI left to right inside right to left apps.
+- 5acc334: npm descriptions name any coding agent, not only Claude Code.
+
 ## 0.1.0
 
 ### Minor Changes

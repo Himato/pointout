@@ -1,6 +1,6 @@
 {
   "name": "@point-out/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Click things in your running app, say what is wrong, hand your coding agent (Claude Code, Codex, Cursor) a brief it can act on.",
   "type": "module",
   "sideEffects": false,

@@ -1,6 +1,6 @@
 {
   "name": "@point-out/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local hub and MCP server that hands Pointout comments to any MCP client (Claude Code, Codex, Cursor, Cline) and brings the replies back into your app.",
   "type": "module",
   "license": "MIT",

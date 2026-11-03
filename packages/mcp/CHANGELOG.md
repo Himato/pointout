@@ -1,5 +1,16 @@
 # @point-out/mcp
 
+## 0.1.1
+
+### Patch Changes
+
+- df3a2bb: README shows the loop as a GIF.
+- 5acc334: npm descriptions name any coding agent, not only Claude Code.
+- Updated dependencies [df3a2bb]
+- Updated dependencies [4929f69]
+- Updated dependencies [5acc334]
+  - @point-out/core@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
