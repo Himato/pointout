@@ -3,6 +3,8 @@
 Claude Code reads your Pointout comments straight from the running app.
 It replies, fixes, resolves, and the badges turn green while you watch.
 
+![Pointout in action: click an element, write a comment, the agent fixes it and the badge turns green](https://raw.githubusercontent.com/Himato/pointout/main/docs/media/demo.gif)
+
 ## Setup
 
 Register it once for every project:

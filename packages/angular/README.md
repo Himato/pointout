@@ -5,6 +5,8 @@ Every element you click comes back with its component, parent chain, selector an
 
 Works from Angular 2 to 22. No decorators, no compiler, no markup changes.
 
+![Pointout in action: click an element, write a comment, the agent fixes it and the badge turns green](https://raw.githubusercontent.com/Himato/pointout/main/docs/media/demo.gif)
+
 ## Install
 
 ```sh

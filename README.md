@@ -1,6 +1,8 @@
 # Pointout
 
-Click things in your running app, say what is wrong, hand Claude Code a brief it can act on.
+Click things in your running app, say what is wrong, hand your coding agent a brief it can act on.
+
+![Pointout in action: click an element, write a comment, the agent fixes it and the badge turns green](docs/media/demo.gif)
 
 ## How it feels
 

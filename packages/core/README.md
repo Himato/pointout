@@ -5,6 +5,8 @@ Copy a brief that Claude Code can act on without guessing.
 
 Plain web component. Zero runtime dependencies. Works with any framework, or none.
 
+![Pointout in action: click an element, write a comment, the agent fixes it and the badge turns green](https://raw.githubusercontent.com/Himato/pointout/main/docs/media/demo.gif)
+
 ## Install
 
 ```sh
